@@ -1,0 +1,10 @@
+Chain:
+
+ECHO: Pitch = 25.4
+ECHO: Link_d = 15
+ECHO: UserRoller_od = 11
+ECHO: Roller_d = 11
+ECHO: Roller_id = 8.36
+ECHO: LinkPin_d = 7.28
+ECHO: LinkPin_id = 4.88
+ECHO: Pin_d = 3.8
