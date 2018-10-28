@@ -62,10 +62,59 @@ module DriveSprocket(){
 	RingGear(Pitch=PlanetaryPitch, nTeeth=nPlanetTeeth, nTeethPinion=nSunTeeth, Thickness=8);
 } // DriveSprocket
 
-DriveSprocket();
+//DriveSprocket();
 
 
+module RatchetWheel(nTeeth=20, OD=100, ID=80){
+	Thickness=6;
+	
+	for (j=[0:nTeeth-1]) rotate([0,0,360/nTeeth*j])
+		translate([0,OD/2-4,0]) rotate([0,0,10]) cylinder(d=10,h=Thickness,$fn=3);
+	
+	difference(){
+		cylinder(d=OD-5, h=Thickness);
+		translate([0,0,-Overlap]) cylinder(d=ID,h=Thickness+Overlap*2);
+	} // diff
+	
+} // RatchetWheel
 
+RatchetWheel();
+
+module PawlWheel(nTeeth=6, Ratchet_OD=100, OD=116){
+	Thickness=6;
+	
+	// teeth
+	difference(){
+		for (j=[0:nTeeth-1]) rotate([0,0,360/nTeeth*j]) 
+			translate([0,Ratchet_OD/2+1.71,0]) 
+				rotate([0,0,190]) cylinder(d=10,h=Thickness,$fn=3);
+			
+		translate([0,0,-Overlap])
+			difference(){
+				cylinder(d=Ratchet_OD+15,h=Thickness+Overlap*2);
+				translate([0,0,-Overlap])cylinder(d=Ratchet_OD+3,h=Thickness+Overlap*4);
+			} // diff
+		
+	} // diff
+	
+	// connectors
+	for (j=[0:nTeeth-1]) {
+		hull(){
+			rotate([0,0,360/nTeeth*j]) translate([2,Ratchet_OD/2+1.71,0]) cylinder(d=2,h=Thickness);
+			rotate([0,0,360/nTeeth*j+17]) translate([0,Ratchet_OD/2+4,0])	cylinder(d=2,h=Thickness);}
+		hull(){
+			rotate([0,0,360/nTeeth*j+17]) translate([0,Ratchet_OD/2+4,0])	cylinder(d=2,h=Thickness);
+			rotate([0,0,360/nTeeth*j+17]) translate([0,Ratchet_OD/2+6,0])	cylinder(d=2,h=Thickness);}
+		}
+	
+	difference(){
+		cylinder(d=OD,h=Thickness);
+		
+		translate([0,0,-Overlap]) cylinder(d=Ratchet_OD+10,h=Thickness+Overlap*2);
+	} // diff
+} // PawlWheel
+
+PawlWheel();
 
 
 
