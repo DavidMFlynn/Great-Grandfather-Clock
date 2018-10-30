@@ -1,6 +1,6 @@
 // **********************************************************
 // Power Input
-// Filename: DriveSprocket.scad
+// Filename: GGC_DriveSprocket.scad
 // Project: Great Grandfather Clock
 // Created: 10/26/2018
 // Revision: 0.1 10/26/2018
@@ -17,7 +17,7 @@
 // TwoPartBallSpacer(BallCircle_d=BallCircle_d,Ball_d=Ball_d,nBalls=16);
 // *********************************************************
 // for Viewing
- ShowCompleteDrive();
+// ShowCompleteDrive();
 //
 //translate([0,0,20]) ShowSprocket();
 //DriveBearing(myFn=90);
@@ -315,7 +315,7 @@ module DriveRingGear(){
 
 //translate([0,0,13]) DriveRingGear();
 
-module RatchetWheel(nTeeth=20, OD=100, ID=80, Width=6){
+module RatchetWheel(nTeeth=20, OD=100, ID=88, Width=6){
 	difference(){
 		union(){
 			cylinder(d=OD-5, h=Width);
@@ -329,6 +329,57 @@ module RatchetWheel(nTeeth=20, OD=100, ID=80, Width=6){
 } // RatchetWheel
 
 //RatchetWheel();
+
+module FreePawl(Thickness=6){
+	Ratchet_OD=100;
+	
+	difference(){
+		
+			translate([0,Ratchet_OD/2+1.71,0]) 
+				rotate([0,0,190]) cylinder(d=10,h=Thickness,$fn=3);
+			
+		translate([0,0,-Overlap])
+			difference(){
+				cylinder(d=Ratchet_OD+15,h=Thickness+Overlap*2);
+				translate([0,0,-Overlap])cylinder(d=Ratchet_OD+3,h=Thickness+Overlap*4);
+			} // diff
+		
+	} // diff
+	
+	
+		hull(){
+			 translate([2,Ratchet_OD/2+1.71,0]) cylinder(d=2,h=Thickness);
+			rotate([0,0,17]) translate([0,Ratchet_OD/2+4,0])	cylinder(d=2,h=Thickness);}
+		hull(){
+			rotate([0,0,17]) translate([0,Ratchet_OD/2+4,0])	cylinder(d=2,h=Thickness);
+			rotate([0,0,17]) translate([0,Ratchet_OD/2+8,0])	cylinder(d=2,h=Thickness);}
+		rotate([0,0,17]) translate([0,Ratchet_OD/2+8,0]) cylinder(d=5,h=Thickness);
+	
+} // FreePawl
+
+//FreePawl(Thickness=5);
+
+module FreePawlWheel(nTeeth=6, Ratchet_OD=100, OD=124, Thickness=6){
+	difference(){
+		cylinder(d=OD,h=Thickness);
+		
+		translate([0,0,-Overlap]) cylinder(d=Ratchet_OD+10,h=Thickness+Overlap*2);
+		
+		for (j=[0:nTeeth-1]) rotate([0,0,360/nTeeth*j+17]){
+			translate([0,Ratchet_OD/2+8,1]) cylinder(d=5+IDXtra*2,h=Thickness);
+			
+			hull(){
+				translate([0,Ratchet_OD/2+4,1])	cylinder(d=3,h=Thickness);
+				translate([0,Ratchet_OD/2+8,1])	cylinder(d=3,h=Thickness);}
+		}
+	} // diff
+	
+	// show Pawls
+	//translate([0,0,1+Overlap]) for (j=[0:nTeeth-1]) rotate([0,0,360/nTeeth*j]) FreePawl(Thickness=5);
+	
+} // FreePawlWheel
+
+//FreePawlWheel();
 
 module PawlWheel(nTeeth=6, Ratchet_OD=100, OD=116){
 	Thickness=6;
