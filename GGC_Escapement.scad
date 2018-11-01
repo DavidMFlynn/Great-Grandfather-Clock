@@ -37,13 +37,13 @@ GearPitch=300;
 GearBacklash=0.4;
 
 module ShowEscapementNPendulum(){
-	translate([0,0,-10-Overlap*2])SpokedGear();
+	//translate([0,0,-10-Overlap*2]) color("Gold") SpokedGear();
 	
-	EscapementWheel();
+	color("Blue") rotate([0,0,360/15*$t]) EscapementWheel();
 	
-	translate([0,90,10+Overlap*2]) PendulumHanger();
+	//translate([0,90,10+Overlap*2]) color("Tan") PendulumHanger();
 	
-	translate([0,90,0]) EscapementRocker();
+	translate([0,90,0]) rotate([0,0,abs(1-$t*2)*8-4]) EscapementRocker();
 }// ShowEscapementNPendulum
 
 
@@ -224,31 +224,33 @@ module EscapementRocker(OD=120,Thickness=5){
 		//translate([0,0,-Overlap]) cylinder(d=6.35,h=10+Overlap*2);
 	} // diff
 	
-	rotate([0,0,45]) translate([0,-OD*0.7,0]){
+	Extention=0.75;
+	
+	rotate([0,0,45]) translate([0,-OD*Extention,0]){
 		cylinder(d=5,h=Thickness);
 		hull(){
 			cylinder(d=3,h=Thickness);
-			translate([18,0,0]) cylinder(d=3,h=Thickness);
+			translate([22,0,0]) cylinder(d=3,h=Thickness);
 		} // hull
 		hull(){
-			translate([18,0,0]) cylinder(d=3,h=Thickness);
-			translate([6,OD*0.7-2,0]) cylinder(d=3,h=Thickness);
-			translate([0,OD*0.7-6,0]) cylinder(d=3,h=Thickness);
+			translate([22,0,0]) cylinder(d=3,h=Thickness);
+			translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
+			translate([0,OD*Extention-6,0]) cylinder(d=3,h=Thickness);
 		} // hull
 	}
 
 	// copy mirror
 	mirror([1,0,0])
-	rotate([0,0,45]) translate([0,-OD*0.7,0]){
+	rotate([0,0,45]) translate([0,-OD*Extention,0]){
 		cylinder(d=5,h=Thickness);
 		hull(){
 			cylinder(d=3,h=Thickness);
-			translate([18,0,0]) cylinder(d=3,h=Thickness);
+			translate([22,0,0]) cylinder(d=3,h=Thickness);
 		} // hull
 		hull(){
-			translate([18,0,0]) cylinder(d=3,h=Thickness);
-			translate([6,OD*0.7-2,0]) cylinder(d=3,h=Thickness);
-			translate([0,OD*0.7-6,0]) cylinder(d=3,h=Thickness);
+			translate([22,0,0]) cylinder(d=3,h=Thickness);
+			translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
+			translate([0,OD*Extention-6,0]) cylinder(d=3,h=Thickness);
 		} // hull
 	}
 } // EscapementRocker
