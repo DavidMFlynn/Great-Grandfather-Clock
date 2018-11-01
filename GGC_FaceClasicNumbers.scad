@@ -1,5 +1,5 @@
 // **********************************************************
-// Face Support
+// Face Numbers 1,2,3..12
 // Filename: GGC_FaceClasicNumbers.scad
 // Project: Great Grandfather Clock
 // Created: 10/29/2018
