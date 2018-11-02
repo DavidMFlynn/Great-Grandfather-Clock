@@ -3,26 +3,32 @@
 // Filename: GGC_Escapement.scad
 // Project: Great Grandfather Clock
 // Created: 10/31/2018
-// Revision: 0.1 10/31/2018
+// Revision: 0.2 11/1/2018
 // Units: mm
 // *********************************************************
 // History:
+// 0.2 11/1/2018  Moved WebbedSpoke to WebbedSpokeLib.scad
 // 0.1 10/31/2018 First code
 // *********************************************************
 // for STL output
 // EscapementWheel();
 // EscapementRocker();
+// EscapementDriveGear();
+// PendulumMountSpline();
+// PendulumHanger();
 // *********************************************************
 // Routines
 // EscapeTooth(ToothLen=12,Thickness=3);
-// WebbedSpoke(ID=25,OD=100,Spoke_w=5,Spoke_h=2,Web_h=4);
-// SpokedGear(nTeeth=60,nSpokes=5);
+// EscapementDriveGear();
 // *********************************************************
 // for Viewing
 ShowEscapementNPendulum();
 // *********************************************************
-
+include<GGC_Basic.scad>
+/*
 include<CommonStuffSAEmm.scad>
+include<WebbedSpokeLib.scad>
+// WebbedSpoke(ID=25,OD=100,Spoke_w=5,Spoke_h=2,Web_h=4);
 include<SplineLib.scad>
 //SplineShaft(d=20,l=30,nSplines=Spline_nSplines,Spline_w=30,Hole=Spline_Hole_d,Key=false);
 // SplineHole(d=20,l=20,nSplines=Spline_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
@@ -35,15 +41,21 @@ IDXtra=0.2;
 Pressure_a=20;
 GearPitch=300;
 GearBacklash=0.4;
+*/
+GGC_Escapement_h=5;
 
 module ShowEscapementNPendulum(){
-	//translate([0,0,-10-Overlap*2]) color("Gold") SpokedGear();
+	translate([0,0,-GGC_Hub_h-Overlap*2]) color("Gold") EscapementDriveGear();
 	
 	color("Blue") rotate([0,0,360/15*$t]) EscapementWheel();
 	
-	//translate([0,90,10+Overlap*2]) color("Tan") PendulumHanger();
+	translate([0,90,GGC_Escapement_h+2+Overlap*2]) color("Tan") PendulumHanger();
+	translate([0,90,-GGC_Hub_h-Overlap*2]) color("LightBlue") PendulumMountSpline();
 	
 	translate([0,90,0]) rotate([0,0,abs(1-$t*2)*8-4]) EscapementRocker();
+	
+	rotate([0,0,-15]) translate([-25-50,0,-GGC_Hub_h-Overlap*2]) rotate([0,0,180/60-1]) 
+		color("Green") SpokedGear(nTeeth=60,nSpokes=5,HasSpline=false);
 }// ShowEscapementNPendulum
 
 
@@ -62,53 +74,34 @@ module EscapeTooth(ToothLen=12,Thickness=3){
 
 //EscapeTooth();
 
-module SpokedGear(nTeeth=60,nSpokes=5){
-	PD=nTeeth*GearPitch/180;
-	RimID=PD-GearPitch/90-6;
-	Hub_d=20;
-	
-	difference(){
-		gear (number_of_teeth=nTeeth,
-			circular_pitch=GearPitch, diametral_pitch=false,
-			pressure_angle=Pressure_a,
-			clearance = 0.2,
-			gear_thickness=5,
-			rim_thickness=5,
-			rim_width=3,
-			hub_thickness=0,
-			hub_diameter=0,
-			bore_diameter=0,
-			circles=0,
-			backlash=GearBacklash,
-			twist=0,
-			involute_facets=0,
-			flat=false);
-	
-		translate([0,0,-Overlap]) cylinder(d=RimID,h=5+Overlap*2);
-		
-	}
-	
-	for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j])
-	WebbedSpoke(ID=Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=3);
-	
-	//Hub
-	difference(){
-		cylinder(d=Hub_d,h=10);
-		translate([0,0,-Overlap]) cylinder(d=6.35,h=10+Overlap*2);
-	} // diff
-	
-	SplineShaft(d=Hub_d-6,l=20,nSplines=4,Spline_w=30,Hole=6.35,Key=false);
-} // SpokedGear
+module PendulumMountSpline(){
+	SplineHub(Hub_d=GGC_Hub_d,SpineLen=GGC_Hub_h*2+GGC_Escapement_h+2,Bore_d=GGC_Bore_d);
+} // PendulumMountSpline
 
-//translate([0,0,-10-Overlap*2])SpokedGear();
+
+module EscapementDriveGear(){
+	SpokedGear(nTeeth=30,nSpokes=5);
+} // EscapementDriveGear
+
+module EscapementTopper(){
+	TopperThickness=5;
+	Hub_d=GGC_Hub_d;
+	
+	cylinder(d=Hub_d,h=TopperThickness);
+	rotate([0,0,-30])translate([0,-85,0]) cylinder(d=Hub_d,h=TopperThickness);
+	rotate([0,0,30])translate([0,-85,0]) cylinder(d=Hub_d,h=TopperThickness);
+	translate([0,90,0]) cylinder(d=Hub_d,h=TopperThickness);
+} // EscapementTopper
+
+translate([0,0,GGC_Hub_h+7+Overlap*2]) EscapementTopper();
 
 module PendulumHanger(){
-	Hub_d=20;
+	Hub_d=GGC_Hub_d;
 	
 	//Hub
 	difference(){
 		union(){
-			cylinder(d=Hub_d,h=10);
+			cylinder(d=Hub_d,h=GGC_Hub_h);
 			translate([0,-30,0]) cylinder(d=75,h=5);
 		} // union
 		
@@ -116,7 +109,7 @@ module PendulumHanger(){
 		
 		//translate([0,0,-Overlap]) cylinder(d=6.35,h=10+Overlap*2);
 		translate([0,0,-Overlap])
-			SplineHole(d=Hub_d-6,l=10+Overlap*2,nSplines=4,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d-6,l=GGC_Hub_h+Overlap*2,nSplines=4,Spline_w=30,Gap=IDXtra,Key=false);
 	} // diff
 	
 	translate([0,-90,0])
@@ -129,65 +122,16 @@ module PendulumHanger(){
 		translate([0,0,-Overlap]) cylinder(d=85,h=5+Overlap*2);
 		
 		translate([0,-55,-Overlap])
-			SplineHole(d=Hub_d-6,l=10+Overlap*2,nSplines=4,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d-6,l=GGC_Hub_h+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 		
 	} // diff
 } // PendulumHanger
 
 //translate([0,90,10+Overlap*2]) PendulumHanger();
 
-module WebbedSpoke(ID=25,OD=100,Spoke_w=5,Spoke_h=2,Web_h=4){
-	difference(){
-		union(){
-			translate([-Spoke_w,0,0]) cube([Spoke_w*2,OD/2,Spoke_h]);
-			if (Web_h != 0)
-				translate([-Spoke_h/2,0,0]) cube([Spoke_h,OD/2+IDXtra,Web_h*1.5]);
-		} // union
-		
-		hull(){			
-			rotate([0,0,atan2(Spoke_w,ID/2+Spoke_w/2)]) translate([0,ID/2+Spoke_w/2-Overlap,-Overlap])
-				cylinder(d=Spoke_w,h=Spoke_h+Overlap*2);
-				
-			
-			rotate([0,0,atan2(Spoke_w,OD/2-Spoke_w/2)]) translate([0,OD/2-Spoke_w/2,-Overlap])
-				cylinder(d=Spoke_w,h=Spoke_h+Overlap*2);
-		} // hull
-		
-		rotate([0,0,atan2(Spoke_w,ID/2+Spoke_w/2)]) translate([0,ID/2+Spoke_w/2-Overlap,-Overlap])mirror([1,1,0])
-			cube(Spoke_w,Spoke_w,Spoke_h+Overlap*2);
-		
-		
-		hull(){			
-			rotate([0,0,-atan2(Spoke_w,ID/2+Spoke_w/2)]) translate([0,ID/2+Spoke_w/2-Overlap,-Overlap])
-				cylinder(d=Spoke_w,h=Spoke_h+Overlap*2);
-			
-			rotate([0,0,-atan2(Spoke_w,OD/2-Spoke_w/2)]) translate([0,OD/2-Spoke_w/2,-Overlap]) cylinder(d=Spoke_w,h=Spoke_h+Overlap*2);
-		} // hull
-		rotate([0,0,-atan2(Spoke_w,ID/2+Spoke_w/2)]) translate([0,ID/2+Spoke_w/2-Overlap,-Overlap])mirror([0,1,0])
-			cube(Spoke_w,Spoke_w,Spoke_h+Overlap*2);
-		
-		// trim ID
-		translate([0,0,-Overlap]) cylinder(d=ID-Overlap,h=Spoke_h+Web_h*1.5+Overlap*2);
-		
-		
-		if (Web_h != 0){
-			hull(){
-				translate([-Spoke_h/2-Overlap,ID/2+Web_h,Web_h*2]) rotate([0,90,0])
-					cylinder(d=Web_h*2,h=Spoke_h+Overlap*2);
-				translate([-Spoke_h/2-Overlap,OD/2-Web_h,Web_h*2]) rotate([0,90,0])
-					cylinder(d=Web_h*2,h=Spoke_h+Overlap*2);
-			} // hull
-			
-		} // if
-	} // diff
-	
-	
-	
-} // WebbedSpoke
 
-//WebbedSpoke();
 
-module EscapementWheel(nTeeth=15, OD=120,Thickness=5){
+module EscapementWheel(nTeeth=15, OD=120,Thickness=GGC_Escapement_h){
 	nSpokes=5;
 	Hub_d=20;
 	
@@ -205,54 +149,45 @@ module EscapementWheel(nTeeth=15, OD=120,Thickness=5){
 	
 	//Hub
 	difference(){
-		cylinder(d=Hub_d,h=10);
+		cylinder(d=Hub_d,h=GGC_Hub_h);
 		//translate([0,0,-Overlap]) cylinder(d=6.35,h=10+Overlap*2);
 		translate([0,0,-Overlap])
-			SplineHole(d=Hub_d-6,l=10+Overlap*2,nSplines=4,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d-6,l=GGC_Hub_h+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 	} // diff
 } // EscapementWheel
 
 //EscapementWheel();
 
 
-module EscapementRocker(OD=120,Thickness=5){
-	Hub_d=20;
+module EscapementRocker(OD=120,Thickness=GGC_Escapement_h){
+	Extention=0.75;
+	
 	difference(){
-		cylinder(d=Hub_d,h=10);
+		union(){
+			// hub
+			cylinder(d=GGC_Hub_d,h=Thickness+2);
+			
+			// arms
+			for (j=[0:1]) mirror([j,0,0])
+				rotate([0,0,45]) translate([0,-OD*Extention,0]){
+					cylinder(d=5,h=Thickness);
+					hull(){
+						cylinder(d=3,h=Thickness);
+						translate([22,0,0]) cylinder(d=3,h=Thickness);
+					} // hull
+					hull(){
+						translate([22,0,0]) cylinder(d=3,h=Thickness);
+						translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
+						translate([0,OD*Extention-6,0]) cylinder(d=3,h=Thickness);
+					} // hull
+				}
+		} // union
+		
 		translate([0,0,-Overlap])
-			SplineHole(d=Hub_d-6,l=10+Overlap*2,nSplines=4,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=GGC_Hub_d-6,l=GGC_Hub_h+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 		//translate([0,0,-Overlap]) cylinder(d=6.35,h=10+Overlap*2);
 	} // diff
 	
-	Extention=0.75;
-	
-	rotate([0,0,45]) translate([0,-OD*Extention,0]){
-		cylinder(d=5,h=Thickness);
-		hull(){
-			cylinder(d=3,h=Thickness);
-			translate([22,0,0]) cylinder(d=3,h=Thickness);
-		} // hull
-		hull(){
-			translate([22,0,0]) cylinder(d=3,h=Thickness);
-			translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
-			translate([0,OD*Extention-6,0]) cylinder(d=3,h=Thickness);
-		} // hull
-	}
-
-	// copy mirror
-	mirror([1,0,0])
-	rotate([0,0,45]) translate([0,-OD*Extention,0]){
-		cylinder(d=5,h=Thickness);
-		hull(){
-			cylinder(d=3,h=Thickness);
-			translate([22,0,0]) cylinder(d=3,h=Thickness);
-		} // hull
-		hull(){
-			translate([22,0,0]) cylinder(d=3,h=Thickness);
-			translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
-			translate([0,OD*Extention-6,0]) cylinder(d=3,h=Thickness);
-		} // hull
-	}
 } // EscapementRocker
 
 //translate([0,90,0]) EscapementRocker();

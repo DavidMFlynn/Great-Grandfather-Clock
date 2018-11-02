@@ -3,10 +3,11 @@
 // Filename: GGC_FaceSupport.scad
 // Project: Great Grandfather Clock
 // Created: 10/29/2018
-// Revision: 0.1 10/29/2018
+// Revision: 0.2 11/1/2018
 // Units: mm
 // *********************************************************
 // History:
+// 0.2 11/1/2018 Moved routines to GGC_Basic.scad
 // 0.1 10/29/2018 First code
 // *********************************************************
 // for STL output
@@ -15,53 +16,14 @@
 // TwelfthConnector();
 // *********************************************************
 // Routines
-// PuzzleConnector(Thickness=6);
-// Socket_12(Base_d=30,Height=10);
-// NumberSupportBase(Len=20);
 // *********************************************************
 // for Viewing
 //ShowBackingPlate();
 // *********************************************************
 
-include<CommonStuffSAEmm.scad>
-
-$fn=90;
-Overlap=0.05;
-
-GGC_Face_d=600;
-GGC_Band_w=40;
-GGC_Band_t=3;
-GGC_FaceSocket_d=30;
-
-module NumberSupportBase(Len=20){
-	
-	Socket_12(Base_d=GGC_FaceSocket_d,Height=10);
-	
-	cylinder(d=12,h=Len);
-	
-} // NumberSupportBase
-
-//NumberSupportBase();
+include<GGC_Basic.scad>
 
 
-module PuzzleConnector(Thickness=6){
-	Web_t=6;
-	Ball_d=12;
-	
-	hull(){
-		cylinder(d=Web_t,h=Thickness);
-		translate([Web_t/2+Ball_d/2,0,0]) cylinder(d=Web_t,h=Thickness);
-	} // hull
-	translate([Web_t/2+Ball_d/2,0,0]) cylinder(d=Ball_d,h=Thickness);
-	
-} // PuzzleConnector
-
-//PuzzleConnector();
-
-module Socket_12(Base_d=30,Height=10){
-	
-	cylinder(d1=Base_d,d2=Base_d+1,h=Height,$fn=12);
-} // Socket_12
 
 module Hub12(){
 	difference(){
