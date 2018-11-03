@@ -3,16 +3,20 @@
 // Filename: GGC_FaceClasicNumbers.scad
 // Project: Great Grandfather Clock
 // Created: 10/29/2018
-// Revision: 0.2 11/1/2018
+// Revision: 0.3 11/2/2018
 // Units: mm
 // *********************************************************
 // History:
+// 0.3 11/2/2018 Parametric pins and support.
 // 0.2 11/1/2018 First number support.
 // 0.1 10/29/2018 First code
 // *********************************************************
 // for STL output
 //FontSocketTop(NumberSize=NumberSize);
 //rotate([180,0,0])NumberThree(NumberSize=NumberSize);
+//rotate([180,0,0]) NumberFour(NumberSize=NumberSize);
+FontSocketTopP(FourPins(NumberSize));
+
 // *********************************************************
 // Routines
 // *********************************************************
@@ -68,6 +72,42 @@ module FontPins(NumberSize=80){
 } // FontPins
 
 //FontPins(NumberSize=NumberSize);
+
+module FontPinsP(PinList=[[0,NumberSize/2.4,0],[0,-NumberSize/2.4,0]]){
+	
+	translate([0,0,-5]) for (j=PinList)
+		translate(j) cylinder(d1=5,d2=6,h=5+Overlap);
+	
+	
+} // FontPinsP
+
+module FontSocketTopP(PinList=[[0,NumberSize/2.4,0],[0,-NumberSize/2.4,0]]){
+	
+	for (j=PinList){
+		difference(){
+			translate([0,0,-6]) translate(j) cylinder(d=8,h=6);
+			translate([0,0,-5]) translate(j) cylinder(d1=5,d2=6,h=5+Overlap);
+		} // diff
+		hull(){
+			translate([0,0,-6]) translate(j) cylinder(d=8,h=1);
+			translate([0,0,-GGC_NumberStandout]) cylinder(d=12,h=20);
+		} // hull
+	} // for
+	
+	translate([0,0,-GGC_NumberStandout]) NumberSupportBase(Len=20);
+	
+} // FontSocketTop
+
+function FourPins ( NumberSize ) = [[NumberSize/5,NumberSize/2.4,0],[NumberSize/5,-NumberSize/2.4,0],[-NumberSize/3,-NumberSize/5,0]] ;
+
+module NumberFour(NumberSize=80){
+	linear_extrude(6)
+	text(text="4",size=NumberSize,halign="center",valign="center",font="Arial Black:style=Regular");
+	FontPinsP(FourPins(NumberSize));
+} // NumberFour
+
+//NumberFour(NumberSize=NumberSize);
+//FontSocketTopP(FourPins(NumberSize));
 
 module NumberOne(NumberSize=80){
 	linear_extrude(6)
