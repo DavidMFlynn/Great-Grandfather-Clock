@@ -49,6 +49,7 @@ GGC_Face_d=600;
 GGC_Band_w=40;
 GGC_Band_t=3;
 GGC_FaceSocket_d=30;
+GGC_NumberSize=100;
 GGC_NumberStandout=75;
 
 module PuzzleConnector(Thickness=6){
