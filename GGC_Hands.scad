@@ -3,6 +3,8 @@
 // Filename: GGC_Hands.scad
 // Project: Great Grandfather Clock
 // Created: 11/5/2018
+// by: David M. Flynn
+// Licence: GPL3.0
 // Revision: 0.1 11/5/2018
 // Units: mm
 // *********************************************************

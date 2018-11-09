@@ -2,6 +2,8 @@
 // Basic stuff used by the Great Grandfather Clock project
 // Filename: GGC_Basic.scad
 // Project: Great Grandfather Clock
+// by: David M. Flynn
+// Licence: GPL3.0
 // Created: 11/1/2018
 // Revision: 1.0 11/1/2018
 // Units: mm
@@ -100,7 +102,11 @@ module SplineHoleHub(Hub_d=GGC_Hub_d){
 	
 } // SplineHoleHub
 
-module SpokedGear(nTeeth=60,GearPitch=GGC_GearPitch,nSpokes=5,Hub_h=GGC_Hub_h,HasSpline=true,SplineLen=GGC_Hub_h*2,Bore_d=GGC_Bore_d){
+module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
+				nSpokes=5, 
+				Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
+				Bore_d=GGC_Bore_d){
+					
 	PD=nTeeth*GearPitch/180;
 	RimID=PD-GearPitch/90-6;
 	
@@ -145,7 +151,9 @@ GGC_GearPitch=300;
 GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
 GGC_BearingPinSmall=0.094*25.4;
 
-module SpurGear(nTeeth=15,Pitch=GGC_GearPitch,Width=GGC_GearWidth,Bore_d=GGC_BearingPinSmall,HasSpline=true){
+module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
+				Width=GGC_GearWidth, 
+				Bore_d=GGC_BearingPinSmall, HasSpline=true){
 	
 	difference(){
 		gear (number_of_teeth=nTeeth,
