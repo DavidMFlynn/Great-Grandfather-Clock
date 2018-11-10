@@ -47,6 +47,10 @@ GGC_nSplines=4;
 //GGC_HubSpline_d=GGC_Hub_d-6;
 GGC_Bore_d=6.35;
 
+GGC_SecondHandShaft_d=3/8*25.4;
+GGC_MinuteHandShaft_d=4/8*25.4;
+GGC_HourHandShaft_d=5/8*25.4;
+
 GGC_Face_d=600;
 GGC_Band_w=40;
 GGC_Band_t=3;

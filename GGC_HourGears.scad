@@ -41,6 +41,10 @@
 // *********************************************************
 include<GGC_Basic.scad>
 
+//GGC_SecondHandShaft_d=3/8*25.4;
+//GGC_MinuteHandShaft_d=4/8*25.4;
+//GGC_HourHandShaft_d=5/8*25.4;
+
 module BackPlate(){
 	difference(){
 		union(){
@@ -94,7 +98,7 @@ module BackPlate(){
 		
 		translate([0,0,-Overlap]){
 			translate([0,0,0]) cylinder(d=GGC_BearingPinSmall,h=6+Overlap*2);
-			translate([100,0,0]) cylinder(d=3/8*25.4,h=12+Overlap*2);
+			translate([100,0,0]) cylinder(d=GGC_SecondHandShaft_d,h=12+Overlap*2);
 			translate([0,62.5,0]) cylinder(d=GGC_BearingPinSmall,h=6+Overlap*2);
 			rotate([0,0,60]) translate([0,62.5,0]) cylinder(d=GGC_BearingPinSmall,h=18+Overlap*2);
 			translate([100,0,0]) rotate([0,0,116.5]) translate([37.5+50,0]) cylinder(d=GGC_BearingPinSmall,h=30+Overlap*2);
@@ -152,7 +156,7 @@ module FrontPlate(){
 	
 		translate([0,0,-Overlap]){
 			translate([0,0,0]) cylinder(d=GGC_BearingPinSmall,h=6+Overlap*2);
-			translate([100,0,0]) cylinder(d=5/8*25.4,h=12+Overlap*2);
+			translate([100,0,0]) cylinder(d=GGC_HourHandShaft_d,h=12+Overlap*2);
 			translate([0,62.5,0]) cylinder(d=GGC_BearingPinSmall,h=6+Overlap*2);
 			rotate([0,0,60]) translate([0,62.5,0]) cylinder(d=GGC_BearingPinSmall,h=18+Overlap*2);
 			translate([100,0,0]) rotate([0,0,116.5]) translate([37.5+50,0]) cylinder(d=GGC_BearingPinSmall,h=12+Overlap*2);
@@ -201,21 +205,21 @@ module SecondHandGear(){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
 				nSpokes=5, 
 				Hub_h=6, HasSpline=false, SplineLen=0,
-				Bore_d=3/8*25.4);
+				Bore_d=GGC_SecondHandShaft_d);
 } // SecondHandGear
 
 module MinuteHandGear(){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
 				nSpokes=5, 
 				Hub_h=6, HasSpline=false, SplineLen=0,
-				Bore_d=12.7);
+				Bore_d=GGC_MinuteHandShaft_d);
 } // MinuteHandGear
 
 module HourHandGear(){
 	SpokedGear(nTeeth=45, GearPitch=GGC_GearPitch,
 				nSpokes=5, 
 				Hub_h=6+6, HasSpline=false, SplineLen=0,
-				Bore_d=5/8*25.4);
+				Bore_d=GGC_HourHandShaft_d);
 } // HourHandGear
 
 module GearIdle60(){
