@@ -27,13 +27,13 @@
 //FontSocketTopP(FourPins(GGC_NumberSize));
 
 //rotate([180,0,0]) NumberTen(NumberSize=GGC_NumberSize);
-//FontSocketTopP(TenPins(GGC_NumberSize));}
+//FontSocketTopP(TenPins(GGC_NumberSize));
 		
 //rotate([180,0,0]) NumberEleven(NumberSize=GGC_NumberSize);
-//FontSocketTopP(ElevenPins(GGC_NumberSize));}
+//FontSocketTopP(ElevenPins(GGC_NumberSize));
 
 //rotate([180,0,0]) NumberTwelve(NumberSize=GGC_NumberSize);
-//FontSocketTopP(TwelvePins(GGC_NumberSize));}
+//FontSocketTopP(TwelvePins(GGC_NumberSize));
 
 // *********************************************************
 // Routines
@@ -179,7 +179,7 @@ module ShowAllNumbers(){
 		
 } // ShowAllNumbers
 
-ShowAllNumbers();
+//ShowAllNumbers();
 
 
 

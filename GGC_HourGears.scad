@@ -5,10 +5,11 @@
 // Created: 11/8/2018
 // by: David M. Flynn
 // Licence: GPL3.0
-// Revision: 0.1 11/8/2018
+// Revision: 0.2 11/17/2018
 // Units: mm
 // *********************************************************
 // History:
+// 0.2 11/17/2018 Printing front/back plates, no mounting yet.
 // 0.1 11/8/2018 First code
 // *********************************************************
 // Notes:
@@ -30,6 +31,9 @@
 // GearB(); // print 1
 // GearB16(); // print 1
 // GearC(); // print 2
+//
+//rotate([180,0,0]) mirror([0,0,1]) BackPlate();
+//FrontPlate();
 // *********************************************************
 // Routines
 //
