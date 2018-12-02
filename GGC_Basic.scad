@@ -106,37 +106,42 @@ module SplineHoleHub(Hub_d=GGC_Hub_d){
 	
 } // SplineHoleHub
 
-module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
+module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
 				Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
-				Bore_d=GGC_Bore_d){
+				Bore_d=GGC_Bore_d, QuickView=false){
 					
 	PD=nTeeth*GearPitch/180;
 	RimID=PD-GearPitch/90-6;
 	
 	difference(){
-		gear (number_of_teeth=nTeeth,
-			circular_pitch=GearPitch, diametral_pitch=false,
-			pressure_angle=Pressure_a,
-			clearance = 0.2,
-			gear_thickness=GGC_GearWidth,
-			rim_thickness=GGC_GearWidth,
-			rim_width=3,
-			hub_thickness=0,
-			hub_diameter=0,
-			bore_diameter=0,
-			circles=0,
-			backlash=GearBacklash,
-			twist=0,
-			involute_facets=0,
-			flat=false);
+		if (QuickView==false){
+			gear (number_of_teeth=nTeeth,
+				circular_pitch=GearPitch, diametral_pitch=false,
+				pressure_angle=Pressure_a,
+				clearance = 0.2,
+				gear_thickness=Width,
+				rim_thickness=Width,
+				rim_width=3,
+				hub_thickness=0,
+				hub_diameter=0,
+				bore_diameter=0,
+				circles=0,
+				backlash=GearBacklash,
+				twist=0,
+				involute_facets=0,
+				flat=false);
+		}else{
+			cylinder(d=nTeeth*GearPitch/180,h=Width);
+			echo("Teeth:",nTeeth,"Pitch radius:",nTeeth*GearPitch/360);
+		}
 	
-		translate([0,0,-Overlap]) cylinder(d=RimID,h=GGC_GearWidth+Overlap*2);
+		translate([0,0,-Overlap]) cylinder(d=RimID,h=Width+Overlap*2);
 		
 	}
 	
 	for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j])
-	WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=3);
+	WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=Width-2);
 	
 	//Hub
 	if (HasSpline==true){
