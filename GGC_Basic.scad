@@ -109,7 +109,7 @@ module SplineHoleHub(Hub_d=GGC_Hub_d){
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
 				Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
-				Bore_d=GGC_Bore_d, QuickView=false){
+				Bore_d=GGC_Bore_d, QuickView=false, GaurdFlange=false){
 					
 	PD=nTeeth*GearPitch/180;
 	RimID=PD-GearPitch/90-6;
@@ -140,17 +140,36 @@ module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 		
 	}
 	
-	for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j])
-	WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=Width-2);
+	if (GaurdFlange==true){
+		difference(){
+			translate([0,0,-1]) cylinder(d=nTeeth*GearPitch/180+5,h=1+Overlap);
+			translate([0,0,-1-Overlap]) cylinder(d=RimID,h=1+Overlap*3);
+		} // diff
+		
+		
+		for (j=[0:nSpokes-1]) translate([0,0,-1]) rotate([0,0,360/nSpokes*j])
+			WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2.5,Web_h=Width-1);
+	}else{
+		for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j])
+			WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=Width-2);
+	}
 	
 	//Hub
 	if (HasSpline==true){
 		SplineHub(Hub_d=GGC_Hub_d,Hub_h=Hub_h,SpineLen=SplineLen,Bore_d=Bore_d);
 	} else {
+		if (GaurdFlange==true){
+				difference(){
+					translate([0,0,-1]) cylinder(d=GGC_Hub_d,h=Hub_h+1);
+					translate([0,0,-1-Overlap]) cylinder(d=Bore_d,h=Hub_h+1+Overlap*2);
+				} // diff
+			}else{
 		difference(){
 			cylinder(d=GGC_Hub_d,h=Hub_h);
+			
 			translate([0,0,-Overlap]) cylinder(d=Bore_d,h=Hub_h+Overlap*2);
 		} // diff
+		} //if (GaurdFlange==true)
 	} // if
 } // SpokedGear
 

@@ -35,14 +35,21 @@
 //
 //rotate([180,0,0]) mirror([0,0,1]) BackPlate();
 //FrontPlate();
+
+// PlateMount1();
+// rotate([180,0,0]) mirror([0,0,1]) PlateMount1();
+// PlateMountingPost();
 // *********************************************************
 // Routines
 //
 // *********************************************************
 // for Viewing
 // ShowTimeKeepingGears();
- translate([0,0,19]) mirror([0,0,1]) BackPlate();
- translate([0,0,-31]) FrontPlate();
+// translate([0,0,19]) mirror([0,0,1]) BackPlate();
+// translate([0,0,-31]) FrontPlate();
+// translate([0,0,19+Overlap]) PlateMount1();
+// translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
+// translate([15,-65,-31]) PlateMountingPost();
 // *********************************************************
 include<GGC_Basic.scad>
 
@@ -233,11 +240,29 @@ module PlateMount1(){
 		
 		for (j=[1:4]) translate([100/5*j,0,FrameThickness]) Bolt4ButtonHeadHole();
 			
-		for (j=[0:3]) translate([Post1_X,Post1_Y,FrameThickness]) rotate([0,0,120*j]) translate([8,0,0]) Bolt4ButtonHeadHole();
+		for (j=[0:2]) translate([Post1_X,Post1_Y,FrameThickness]) rotate([0,0,120*j]) translate([8,0,0]) Bolt4ButtonHeadHole();
 	} // diff
 } // PlateMount1
 
-translate([0,0,18]) PlateMount1();
+//translate([0,0,19]) PlateMount1();
+//translate([0,0,-31]) mirror([0,0,1]) PlateMount1();
+
+module PlateMountingPost(){
+	Post_h=50;
+	difference(){
+		cylinder(d=25,h=Post_h);
+		
+		translate([0,0,10]) Bolt4ButtonHeadHole(depth=12,lHead=Post_h);
+		
+		for (j=[0:2]) rotate([0,0,120*j]){
+			translate([8,0,Post_h]) Bolt4Hole();
+			translate([8,0,0]) rotate([180,0,0]) Bolt4Hole();
+		}
+			
+	} // diff
+} // PlateMountingPost
+
+//PlateMountingPost();
 
 module GearA(QuickView=false){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
@@ -277,14 +302,16 @@ module SecondHandGear(QuickView=false){
 	SpokedGear(nTeeth=nTeeth_SecondHand, GearPitch=GGC_GearPitch,
 				nSpokes=5, 
 				Hub_h=12, HasSpline=false, SplineLen=0,
-				Bore_d=GGC_SecondHandShaft_d,QuickView=QuickView);
+				Bore_d=GGC_SecondHandShaft_d,QuickView=QuickView, GaurdFlange=false);
 } // SecondHandGear
+
+//SecondHandGear(QuickView=false);
 
 module MinuteHandGear(QuickView=false){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
 				nSpokes=5, 
 				Hub_h=6, HasSpline=false, SplineLen=0,
-				Bore_d=GGC_MinuteHandShaft_d,QuickView=QuickView);
+				Bore_d=GGC_MinuteHandShaft_d,QuickView=QuickView, GaurdFlange=true);
 } // MinuteHandGear
 
 module HourHandGear(QuickView=false){
