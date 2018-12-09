@@ -38,6 +38,8 @@
 
 // PlateMount1();
 // rotate([180,0,0]) mirror([0,0,1]) PlateMount1();
+//PlateMount2();
+//rotate([180,0,0]) mirror([0,0,1]) PlateMount2();
 // PlateMountingPost();
 // *********************************************************
 // Routines
@@ -50,12 +52,24 @@
 // translate([0,0,19+Overlap]) PlateMount1();
 // translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
 // translate([15,-65,-31]) PlateMountingPost();
+//rotate([0,180,0])
+// ShowTimeGearModule();
 // *********************************************************
 include<GGC_Basic.scad>
 
 //GGC_SecondHandShaft_d=3/8*25.4;
 //GGC_MinuteHandShaft_d=4/8*25.4;
 //GGC_HourHandShaft_d=5/8*25.4;
+
+module ShowTimeGearModule(){
+	ShowTimeKeepingGears();
+ translate([0,0,19]) mirror([0,0,1]) BackPlate();
+ translate([0,0,-31]) FrontPlate();
+ translate([0,0,19+Overlap]) PlateMount1();
+ translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
+ translate([15,-65,-31]) PlateMountingPost();
+	
+} // ShowTimeGearModule
 
 module BackPlate(){
 	difference(){
@@ -217,6 +231,36 @@ module FrontPlate(){
 //translate([0,0,-31]) FrontPlate();
 FrameWidth=50;
 FrameThickness=5;
+
+module PlateMount2(){
+	
+	Post1_X=125;
+	Post1_Y=65;
+	
+	difference(){
+		union(){
+			translate([Post1_X,Post1_Y,0]) cylinder(d=25,h=FrameThickness);
+			translate([100,0,0]) rotate([0,0,116.5]) for (j=[1:4])
+				translate([(37.5+50)/5*j,0,0]) cylinder(d=10,h=FrameThickness);
+			
+			for (j=[1:4]) hull(){
+				translate([Post1_X,Post1_Y,0]) cylinder(d=5,h=FrameThickness);
+				translate([100,0,0]) rotate([0,0,116.5]) translate([(37.5+50)/5*j,0,0]) cylinder(d=5,h=FrameThickness);}
+		} // union
+		
+		translate([Post1_X,Post1_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
+		
+		translate([100,0,0]) rotate([0,0,116.5]) for (j=[1:4])
+			translate([(37.5+50)/5*j,0,FrameThickness]) Bolt4ButtonHeadHole();
+			
+		for (j=[0:2]) translate([Post1_X,Post1_Y,FrameThickness]) rotate([0,0,120*j])
+			translate([8,0,0]) Bolt4ButtonHeadHole();
+	} // diff
+} // PlateMount2
+
+//translate([0,0,19]) PlateMount2();
+//translate([125,65,-31]) PlateMountingPost();
+
 module PlateMount1(){
 	
 	Post1_X=15;
@@ -224,16 +268,12 @@ module PlateMount1(){
 	
 	difference(){
 		union(){
-			
 			translate([Post1_X,Post1_Y,0]) cylinder(d=25,h=FrameThickness);
 			for (j=[1:4]) translate([100/5*j,0,0]) cylinder(d=10,h=FrameThickness);
 			
 			for (j=[1:4]) hull(){
 				translate([Post1_X,Post1_Y,0]) cylinder(d=5,h=FrameThickness);
-				translate([100/5*j,0,0]) cylinder(d=5,h=FrameThickness);
-			}
-				
-		
+				translate([100/5*j,0,0]) cylinder(d=5,h=FrameThickness);}
 		} // union
 		
 		translate([Post1_X,Post1_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
