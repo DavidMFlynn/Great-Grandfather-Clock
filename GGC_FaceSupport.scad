@@ -26,6 +26,8 @@ include<GGC_Basic.scad>
 
 
 module Hub12(){
+	GearFrame_h=10;
+	
 	difference(){
 		union(){
 			cylinder(d=120,h=GGC_Band_t);
@@ -43,7 +45,6 @@ module Hub12(){
 	
 	for (j=[0:11]) rotate([0,0,30*j+15]) 
 		translate([0,TwelfthInset,0]) rotate([0,0,90]) PuzzleConnector(Thickness=GGC_Band_t+Overlap*2);
-	
 	
 } // Hub12
 

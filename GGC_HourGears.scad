@@ -40,7 +40,10 @@
 // rotate([180,0,0]) mirror([0,0,1]) PlateMount1();
 //PlateMount2();
 //rotate([180,0,0]) mirror([0,0,1]) PlateMount2();
+//PlateMount3();
+//rotate([180,0,0]) mirror([0,0,1]) PlateMount3();
 // PlateMountingPost();
+// rotate([0,180,0]) PostMount();
 // *********************************************************
 // Routines
 //
@@ -49,9 +52,19 @@
 // ShowTimeKeepingGears();
 // translate([0,0,19]) mirror([0,0,1]) BackPlate();
 // translate([0,0,-31]) FrontPlate();
+
 // translate([0,0,19+Overlap]) PlateMount1();
 // translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
-// translate([15,-65,-31]) PlateMountingPost();
+// translate([GGC_Post1_X,GGC_Post1_Y,-31]) PlateMountingPost();
+
+// translate([0,0,19]) PlateMount2();
+// translate([0,0,-31]) mirror([0,0,1]) PlateMount2();
+// translate([GGC_Post2_X,GGC_Post2_Y,-31]) PlateMountingPost();
+
+// translate([0,0,19]) PlateMount3();
+// translate([0,0,-31]) mirror([0,0,1]) PlateMount3();
+// translate([GGC_Post3_X,GGC_Post3_Y,-31]) PlateMountingPost();
+
 //rotate([0,180,0])
 // ShowTimeGearModule();
 // *********************************************************
@@ -61,16 +74,46 @@ include<GGC_Basic.scad>
 //GGC_MinuteHandShaft_d=4/8*25.4;
 //GGC_HourHandShaft_d=5/8*25.4;
 
+
 module ShowTimeGearModule(){
-	ShowTimeKeepingGears();
- translate([0,0,19]) mirror([0,0,1]) BackPlate();
- translate([0,0,-31]) FrontPlate();
- translate([0,0,19+Overlap]) PlateMount1();
- translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
- translate([15,-65,-31]) PlateMountingPost();
+	//ShowTimeKeepingGears();
+	translate([0,0,19]) mirror([0,0,1]) BackPlate();
+	translate([0,0,-31]) FrontPlate();
 	
+	translate([0,0,19+Overlap]) PlateMount1();
+	translate([0,0,-31-Overlap]) mirror([0,0,1]) PlateMount1();
+	translate([GGC_Post1_X,GGC_Post1_Y,-31]) PlateMountingPost();
+	
+	translate([0,0,19]) PlateMount2();
+	translate([0,0,-31]) mirror([0,0,1]) PlateMount2();
+	translate([GGC_Post2_X,GGC_Post2_Y,-31]) PlateMountingPost();
+
+	translate([0,0,19]) PlateMount3();
+	translate([0,0,-31]) mirror([0,0,1]) PlateMount3();
+	translate([GGC_Post3_X,GGC_Post3_Y,-31]) PlateMountingPost();
+
+	translate([GGC_Post1_X,GGC_Post1_Y,39]) rotate([180,0,0]) PostMount();
 } // ShowTimeGearModule
 
+//rotate([0,180,180]) translate([-100,0,0]) ShowTimeGearModule();
+
+module PostMount(){
+	GearFrame_h=10;
+	
+	difference(){
+		union(){
+			hull(){
+				translate([0,0,5]) cylinder(d=25,h=GearFrame_h);
+				translate([30,0,5]) cylinder(d=12,h=GearFrame_h);
+			} // hull
+			translate([30,0,0]) cylinder(d=12,h=5+Overlap);
+		} // union
+		
+		translate([0,0,5+GearFrame_h]) Bolt4Hole();
+		translate([30,0,6]) Bolt4ButtonHeadHole();
+	} // diff
+} // PostMount
+	
 module BackPlate(){
 	difference(){
 		union(){
@@ -232,55 +275,79 @@ module FrontPlate(){
 FrameWidth=50;
 FrameThickness=5;
 
-module PlateMount2(){
-	
-	Post1_X=125;
-	Post1_Y=65;
+
+module PlateMount3(){
 	
 	difference(){
 		union(){
-			translate([Post1_X,Post1_Y,0]) cylinder(d=25,h=FrameThickness);
+			translate([GGC_Post3_X,GGC_Post3_Y,0]) cylinder(d=25,h=FrameThickness);
+			translate([0,62.5,0]) rotate([0,0,120]) for (j=[1:3])
+				translate([0,62.5/4*j,0]) cylinder(d=10,h=FrameThickness);
+			
+			for (j=[1:3]) hull(){
+				translate([GGC_Post3_X,GGC_Post3_Y,0]) cylinder(d=5,h=FrameThickness);
+				translate([0,62.5,0]) rotate([0,0,120]) translate([0,62.5/4*j,0]) cylinder(d=5,h=FrameThickness);}
+		} // union
+		
+		translate([GGC_Post3_X,GGC_Post3_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
+		
+		translate([0,62.5,0]) rotate([0,0,120]) for (j=[1:3])
+			translate([0,62.5/4*j,FrameThickness]) Bolt4ButtonHeadHole();
+			
+		// post bolts
+		for (j=[0:2]) translate([GGC_Post3_X,GGC_Post3_Y,FrameThickness]) rotate([0,0,120*j])
+			translate([8,0,0]) Bolt4ButtonHeadHole();
+	} // diff
+} // PlateMount3
+
+//translate([0,0,19]) PlateMount3();
+//translate([0,0,-31]) mirror([0,0,1]) PlateMount3();
+//translate([GGC_Post3_X,GGC_Post3_Y,-31]) PlateMountingPost();
+
+module PlateMount2(){
+	
+	
+	difference(){
+		union(){
+			translate([GGC_Post2_X,GGC_Post2_Y,0]) cylinder(d=25,h=FrameThickness);
 			translate([100,0,0]) rotate([0,0,116.5]) for (j=[1:4])
 				translate([(37.5+50)/5*j,0,0]) cylinder(d=10,h=FrameThickness);
 			
 			for (j=[1:4]) hull(){
-				translate([Post1_X,Post1_Y,0]) cylinder(d=5,h=FrameThickness);
+				translate([GGC_Post2_X,GGC_Post2_Y,0]) cylinder(d=5,h=FrameThickness);
 				translate([100,0,0]) rotate([0,0,116.5]) translate([(37.5+50)/5*j,0,0]) cylinder(d=5,h=FrameThickness);}
 		} // union
 		
-		translate([Post1_X,Post1_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
+		translate([GGC_Post2_X,GGC_Post2_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
 		
 		translate([100,0,0]) rotate([0,0,116.5]) for (j=[1:4])
 			translate([(37.5+50)/5*j,0,FrameThickness]) Bolt4ButtonHeadHole();
 			
-		for (j=[0:2]) translate([Post1_X,Post1_Y,FrameThickness]) rotate([0,0,120*j])
+		for (j=[0:2]) translate([GGC_Post2_X,GGC_Post2_Y,FrameThickness]) rotate([0,0,120*j])
 			translate([8,0,0]) Bolt4ButtonHeadHole();
 	} // diff
 } // PlateMount2
 
 //translate([0,0,19]) PlateMount2();
-//translate([125,65,-31]) PlateMountingPost();
+//translate([GGC_Post2_X,GGC_Post2_Y,-31]) PlateMountingPost();
 
 module PlateMount1(){
-	
-	Post1_X=15;
-	Post1_Y=-65;
-	
+		
 	difference(){
 		union(){
-			translate([Post1_X,Post1_Y,0]) cylinder(d=25,h=FrameThickness);
+			translate([GGC_Post1_X,GGC_Post1_Y,0]) cylinder(d=25,h=FrameThickness);
 			for (j=[1:4]) translate([100/5*j,0,0]) cylinder(d=10,h=FrameThickness);
 			
 			for (j=[1:4]) hull(){
-				translate([Post1_X,Post1_Y,0]) cylinder(d=5,h=FrameThickness);
+				translate([GGC_Post1_X,GGC_Post1_Y,0]) cylinder(d=5,h=FrameThickness);
 				translate([100/5*j,0,0]) cylinder(d=5,h=FrameThickness);}
 		} // union
 		
-		translate([Post1_X,Post1_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
+		translate([GGC_Post1_X,GGC_Post1_Y,-Overlap]) cylinder(d=7,h=FrameThickness+Overlap*2);
 		
 		for (j=[1:4]) translate([100/5*j,0,FrameThickness]) Bolt4ButtonHeadHole();
 			
-		for (j=[0:2]) translate([Post1_X,Post1_Y,FrameThickness]) rotate([0,0,120*j]) translate([8,0,0]) Bolt4ButtonHeadHole();
+		for (j=[0:2]) translate([GGC_Post1_X,GGC_Post1_Y,FrameThickness]) rotate([0,0,120*j]) translate([8,0,0]) Bolt4ButtonHeadHole();
 	} // diff
 } // PlateMount1
 

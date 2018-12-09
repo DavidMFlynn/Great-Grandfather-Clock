@@ -58,6 +58,13 @@ GGC_FaceSocket_d=30;
 GGC_NumberSize=100;
 GGC_NumberStandout=75;
 
+GGC_Post1_X=15;
+GGC_Post1_Y=-65;
+GGC_Post2_X=125;
+GGC_Post2_Y=65;
+GGC_Post3_X=-60;
+GGC_Post3_Y=100;
+
 module PuzzleConnector(Thickness=6){
 	Web_t=6;
 	Ball_d=12;
