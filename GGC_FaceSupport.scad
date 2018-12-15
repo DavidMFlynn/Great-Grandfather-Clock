@@ -3,10 +3,11 @@
 // Filename: GGC_FaceSupport.scad
 // Project: Great Grandfather Clock
 // Created: 10/29/2018
-// Revision: 0.2 11/1/2018
+// Revision: 0.25 12/15/2018
 // Units: mm
 // *********************************************************
 // History:
+// 0.25 12/15/2018 Adjusted rotation
 // 0.2 11/1/2018 Moved routines to GGC_Basic.scad
 // 0.1 10/29/2018 First code
 // *********************************************************
@@ -18,7 +19,7 @@
 // Routines
 // *********************************************************
 // for Viewing
-//ShowBackingPlate();
+ShowBackingPlate();
 // *********************************************************
 
 include<GGC_Basic.scad>
@@ -32,18 +33,18 @@ module Hub12(){
 		union(){
 			cylinder(d=120,h=GGC_Band_t);
 			
-			for (j=[0:11]) rotate([0,0,30*j+15]) hull(){
+			for (j=[0:11]) rotate([0,0,30*j]) hull(){
 				translate([-GGC_Band_w*0.7/2,TwelfthInset,0]) cube([GGC_Band_w*0.7,0.1, GGC_Band_t]);
 				translate([0,60,0]) cylinder(d=GGC_Band_w*0.7,h=GGC_Band_t);}
 		} // union
 		
-		for (j=[0:11]) rotate([0,0,30*j+15])
+		for (j=[0:11]) rotate([0,0,30*j])
 			translate([0,60,GGC_Band_t]) Bolt6ClearHole();
 		
 		translate([0,0,-Overlap]) cylinder(d=90,h=GGC_Band_t+Overlap*2);
 	} // diff
 	
-	for (j=[0:11]) rotate([0,0,30*j+15]) 
+	for (j=[0:11]) rotate([0,0,30*j]) 
 		translate([0,TwelfthInset,0]) rotate([0,0,90]) PuzzleConnector(Thickness=GGC_Band_t+Overlap*2);
 	
 } // Hub12
@@ -108,9 +109,9 @@ module ShowBackingPlate(){
 	Hub12();
 	
 	for (j=[0:11])
-		rotate([0,0,30*j+15]) translate([0,-GGC_Face_d/2+TwelfthInset,0]) color("Blue") TwelfthConnector();
+		rotate([0,0,30*j]) translate([0,-GGC_Face_d/2+TwelfthInset,0]) color("Blue") TwelfthConnector();
 
-	for (j=[0:11]) rotate([0,0,30*j]) Twelfth();
+	for (j=[0:11]) rotate([0,0,30*j+15]) Twelfth();
 } // ShowBackingPlate
 
 //ShowBackingPlate();
