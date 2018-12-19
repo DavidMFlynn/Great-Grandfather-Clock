@@ -29,10 +29,10 @@
 ;
 ; Speed control constants
 ;
-kMaxSpeed	EQU	.102	;a102 = 209 in/min
+kMaxSpeed	EQU	.1	;a102 = 209 in/min
 kUseDSTable	EQU	0
-kUseVSTable	EQU	1	;starts at 5.4 in/min
-kUseTable2	EQU	1	;2000 steps / inch
+kUseVSTable	EQU	0	;starts at 5.4 in/min
+kUseTable2	EQU	0	;2000 steps / inch
 kUseTable5	EQU	0	;5000 steps / inch
 ;
 ; Stepper Driver Variables, somewhere in RAM
@@ -153,6 +153,18 @@ ISR_MM_GoSlow	MOVF	MinSpeedX,W
 ISR_MotorMove_3	BCF	PIR1,CCP1IF
 	return
 ;
+	if IsClockDriver
+RunClock	movlb	0	;Bank 0
+	btfss	MotorFlagsX,InPosition
+	return
+	movlw	0xFF
+	movwf	StepsToGoXLo
+	movwf	StepsToGoXHi
+	BCF	MotorFlagsX,InPosition	;move it
+;
+	return
+	endif
+;
 	if useMotorTest
 ;=========================================================================================
 ; Motor test
@@ -200,6 +212,18 @@ AlreadyDid:
 NotYet:
 NOTZERO:
 	return
+	endif
+;
+	if IsClockDriver
+GetStepTimeLo:
+	BRW
+	RETLW	Low .50000
+	RETLW	Low .50000
+;
+GetStepTimeHi:
+	BRW
+	RETLW	High .50000
+	RETLW	High .50000
 	endif
 ;
 	if kUseTable2

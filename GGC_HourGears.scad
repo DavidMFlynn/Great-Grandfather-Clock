@@ -386,6 +386,15 @@ module PlateMountingPost(){
 
 //PlateMountingPost();
 
+module MotorGear(QuickView=false){
+	SpokedGear(nTeeth=40, GearPitch=GGC_GearPitch,
+				nSpokes=5, 
+				Hub_h=10, HasSpline=false, SplineLen=0,
+				Bore_d=5,QuickView=QuickView, GaurdFlange=true);
+} // MotorGear
+
+MotorGear();
+
 module GearA(QuickView=false){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
 				nSpokes=5, 

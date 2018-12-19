@@ -14,7 +14,10 @@
 // for STL output
 // *********************************************************
 // Routines
-// SpokedGear(nTeeth=60,nSpokes=5,HasSpline=true);
+// SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
+//				nSpokes=5, 
+//				Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
+//				Bore_d=GGC_Bore_d, QuickView=false, GaurdFlange=false);
 // SplineHub(Hub_d=GGC_Hub_d,SpineLen=GGC_Hub_h*2,Bore_d=GGC_Bore_d);
 // SplineHoleHub(Hub_d=GGC_Hub_d);
 // NumberSupportBase(Len=20);

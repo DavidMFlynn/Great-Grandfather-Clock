@@ -27,9 +27,9 @@
 ;
 I2C_ADDRESS	EQU	0x3A	; Slave default address
 SpdLimitMax	EQU	.95
-DefaultMinSpd	EQU	.20	;0..SpdLimitMax-1
-DefaultMaxSpd	EQU	.55	;0..SpdLimitMax
-DefaultFlags	EQU	b'00000110'	;8th step mode
+DefaultMinSpd	EQU	.0	;0..SpdLimitMax-1
+DefaultMaxSpd	EQU	.1	;0..SpdLimitMax
+DefaultFlags	EQU	b'00000011'	;8th step mode
 ;
 ;I/O bits (for connectors, Left to Right)
 P2ED_P2	EQU	2
@@ -563,7 +563,7 @@ start	MOVLB	0x01	; select bank 1
 ; init flags (boolean variables) to false
 	CLRF	Flags
 ;
-	if runTestAtStartup||IsClockDriver
+	if runTestAtStartup
 ; wait 5 seconds before doing anything
 	BANKSEL	Timer4Hi
 	MOVLW	Low .500
@@ -571,6 +571,15 @@ start	MOVLB	0x01	; select bank 1
 	MOVLW	High .500
 	MOVWF	Timer4Hi
 	BSF	RunMotorTest
+	endif
+;
+	if IsClockDriver
+	BANKSEL	Timer4Hi
+	MOVLW	Low .500
+	MOVWF	Timer4Lo
+	MOVLW	High .500
+	MOVWF	Timer4Hi
+	BCF	RunMotorTest	
 	endif
 ;
 ;=========================================================================================
@@ -590,6 +599,15 @@ MainLoop	CLRWDT
 	if useMotorTest
 	BTFSC	RunMotorTest
 	call	MotorTest
+	endif
+;
+	if IsClockDriver
+	call	TestT4_Zero
+	SKPNZ
+	BSF	RunMotorTest
+;
+	BTFSC	RunMotorTest
+	call	RunClock
 	endif
 ;
 ;Move test
