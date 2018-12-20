@@ -5,10 +5,11 @@
 // by: David M. Flynn
 // Licence: GPL3.0
 // Created: 11/1/2018
-// Revision: 1.0 11/1/2018
+// Revision: 1.0.1 12/19/2018
 // Units: mm
 // *********************************************************
 // History:
+// 1.0.1 12/19/2018 Improved scalability.
 // 1.0 11/1/2018  First code
 // *********************************************************
 // for STL output
@@ -68,6 +69,7 @@ GGC_Post2_Y=65;
 GGC_Post3_X=-60;
 GGC_Post3_Y=100;
 
+
 module PuzzleConnector(Thickness=6){
 	Web_t=6;
 	Ball_d=12;
@@ -97,32 +99,32 @@ module NumberSupportBase(Len=20){
 
 //NumberSupportBase();
 
-module SplineHub(Hub_d=GGC_Hub_d,Hub_h=GGC_Hub_h,SpineLen=GGC_Hub_h*2,Bore_d=GGC_Bore_d){
+module SplineHub(Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h, SpineLen=GGC_Hub_h*2, Bore_d=GGC_Bore_d){
 	difference(){
 		cylinder(d=Hub_d,h=Hub_h);
 		translate([0,0,-Overlap]) cylinder(d=Bore_d,h=Hub_h+Overlap*2);
 	} // diff
 	
-	SplineShaft(d=Hub_d-6,l=SpineLen,nSplines=GGC_nSplines,Spline_w=30,Hole=Bore_d,Key=false);
+	SplineShaft(d=Hub_d*0.7, l=SpineLen, nSplines=GGC_nSplines, Spline_w=30, Hole=Bore_d, Key=false);
 } // SplineHub
 
-module SplineHoleHub(Hub_d=GGC_Hub_d){
+module SplineHoleHub(Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h){
 	difference(){
-		cylinder(d=Hub_d,h=GGC_Hub_h);
+		cylinder(d=Hub_d,h=Hub_h);
 		
 		translate([0,0,-Overlap])
-			SplineHole(d=Hub_d-6,l=GGC_Hub_h+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d*0.7, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=IDXtra, Key=false);
 	} // diff
 	
 } // SplineHoleHub
 
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
-				Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
+				Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
 				Bore_d=GGC_Bore_d, QuickView=false, GaurdFlange=false){
 					
 	PD=nTeeth*GearPitch/180;
-	RimID=PD-GearPitch/90-6;
+	RimID=PD-GearPitch/90-Width*1.2;
 	
 	difference(){
 		if (QuickView==false){
@@ -158,15 +160,15 @@ module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 		
 		
 		for (j=[0:nSpokes-1]) translate([0,0,-1]) rotate([0,0,360/nSpokes*j])
-			WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2.5,Web_h=Width-1);
+			WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=Width,Spoke_h=Width/2,Web_h=Width*0.8);
 	}else{
 		for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j])
-			WebbedSpoke(ID=GGC_Hub_d,OD=RimID,Spoke_w=5,Spoke_h=2,Web_h=Width-2);
+			WebbedSpoke(ID=Hub_d,OD=RimID,Spoke_w=Width,Spoke_h=Width/2.5,Web_h=Width*0.6);
 	}
 	
 	//Hub
 	if (HasSpline==true){
-		SplineHub(Hub_d=GGC_Hub_d,Hub_h=Hub_h,SpineLen=SplineLen,Bore_d=Bore_d);
+		SplineHub(Hub_d=Hub_d,Hub_h=Hub_h,SpineLen=SplineLen,Bore_d=Bore_d);
 	} else {
 		if (GaurdFlange==true){
 				difference(){
@@ -188,6 +190,13 @@ module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 GGC_GearPitch=300;
 GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
 GGC_BearingPinSmall=0.094*25.4;
+
+//*
+SpokedGear(nTeeth=60, GearPitch=1200, Width=20, 
+				nSpokes=5, 
+				Hub_d=GGC_Hub_d*4, Hub_h=GGC_Hub_h*4, HasSpline=true, SplineLen=GGC_Hub_h*2*4,
+				Bore_d=GGC_Bore_d*4, QuickView=false, GaurdFlange=false);
+/**/
 
 module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
 				Width=GGC_GearWidth, 

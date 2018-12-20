@@ -93,7 +93,7 @@ module SplineShaft(d=20,l=50,nSplines=Spline_nSplines,Spline_w=10,Hole=Spline_Ho
 	/**/		
 		// trim OD
 		difference(){
-			translate([0,0,-Overlap]) cylinder(d=d+5,h=l+Overlap*2);
+			translate([0,0,-Overlap]) cylinder(d=d*1.25,h=l+Overlap*2);
 			translate([0,0,-Overlap*2]) cylinder(d=d,h=l+Overlap*4,$fn=360);
 		} // diff
 		
