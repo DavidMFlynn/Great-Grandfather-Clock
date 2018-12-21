@@ -167,9 +167,43 @@ module GearSegment(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 			
 } // GearSegment
 
-rotate([180,0,0])
-GearSegment(nTeeth=60, GearPitch=1200, Width=20, 
-					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=720) Bolt6HeadHole();
+//rotate([180,0,0])
+//GearSegment(nTeeth=60, GearPitch=1200, Width=20, 
+//					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=720) Bolt6HeadHole();
+
+module BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
+					GaurdFlange=false, myFn=90){
+	
+				
+	Tooth_h=GearPitch/90;
+	PD=nTeeth*GearPitch/180;
+	RimID=PD-Tooth_h*3;
+						
+	WebbedSpoke(ID=Hub_d, OD=RimID, Spoke_w=Width, Spoke_h=Width/2.5, Web_h=Width*0.6);
+					
+	// Gear mount	
+	difference(){
+		translate([-Tooth_h,RimID/2-Tooth_h/20,0]) cube([Tooth_h*2,Tooth_h+Tooth_h/20-IDXtra,Width/2]);
+		
+		translate([-Tooth_h/2,RimID/2+Tooth_h/2,Width/2]) children();
+		translate([Tooth_h/2,RimID/2+Tooth_h/2,Width/2]) children();
+	} // diff
+	
+	// Hub mount
+	difference(){
+		translate([-Tooth_h*0.75,Hub_d/2,0]) mirror([0,1,0]) cube([Tooth_h*1.5,Tooth_h+Tooth_h/20-IDXtra,Width/2.5]);
+		
+		translate([Tooth_h/2.5,Hub_d/2-Tooth_h/2,0]) rotate([180,0,0]) Bolt6HeadHole();
+		translate([-Tooth_h/2.5,Hub_d/2-Tooth_h/2,0]) rotate([180,0,0]) Bolt6HeadHole();
+		
+		difference(){
+			translate([0,0,-Overlap]) cylinder(d=Hub_d+Tooth_h,h=Width/2.5+Overlap*2);
+			translate([0,0,-Overlap*2]) cylinder(d=Hub_d+Overlap,h=Width/2.5+Overlap*4);
+		} // diff
+	} // diff
+} // BoltedSpoke
+
+BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d*4, GearPitch=1200, Width=20, GaurdFlange=false) Bolt6Hole();
 
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
