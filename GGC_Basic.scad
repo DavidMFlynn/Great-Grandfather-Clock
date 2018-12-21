@@ -118,6 +118,59 @@ module SplineHoleHub(Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h){
 	
 } // SplineHoleHub
 
+module GearSegment(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
+					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=90){
+		
+	Tooth_h=GearPitch/90;
+	PD=nTeeth*GearPitch/180;
+	RimID=PD-Tooth_h*3;
+		
+	difference(){
+		if (QuickView==false){
+			gear (number_of_teeth=nTeeth,
+				circular_pitch=GearPitch, diametral_pitch=false,
+				pressure_angle=Pressure_a,
+				clearance = 0.2,
+				gear_thickness=Width,
+				rim_thickness=Width,
+				rim_width=3,
+				hub_thickness=0,
+				hub_diameter=0,
+				bore_diameter=0,
+				circles=0,
+				backlash=GearBacklash,
+				twist=0,
+				involute_facets=0,
+				flat=false);
+		}else{
+			cylinder(d=nTeeth*GearPitch/180,h=Width);
+			echo("Teeth:",nTeeth,"Pitch radius:",nTeeth*GearPitch/360);
+		}
+	
+		// center hole
+		translate([0,0,-Overlap]) cylinder(d=RimID,h=Width+Overlap*2,$fn=myFn);
+		// cut to length
+		rotate([0,0,180/60]) translate([-IDXtra,0,-Overlap]) cube([PD,PD,Width+Overlap*2]);
+		rotate([0,0,180/60+Segment_a]) translate([IDXtra,0,-Overlap]) mirror([1,0,0]) cube([PD,PD,Width+Overlap*2]);
+		rotate([0,0,180/60+Segment_a/2]) translate([-PD,0,-Overlap]) mirror([0,1,0]) cube([PD*2,PD,Width+Overlap*2]);
+		
+		// right notch and bolt
+		rotate([0,0,180/60]) translate([-Tooth_h/2,RimID/2+Tooth_h/2,Width]) children();
+		rotate([0,0,180/60]) translate([-Tooth_h-IDXtra,PD/2-Tooth_h/2,-Overlap]) 
+			mirror([0,1,0]) cube([Tooth_h+IDXtra+Overlap,Tooth_h*1.1,Width/2]);
+		
+		// left notch and bolt
+		rotate([0,0,180/60+Segment_a]) mirror([1,0,0])translate([-Tooth_h/2,RimID/2+Tooth_h/2,Width]) children();
+		rotate([0,0,180/60+Segment_a]) mirror([1,0,0])translate([-Tooth_h-IDXtra,PD/2-Tooth_h/2,-Overlap]) 
+			mirror([0,1,0]) cube([Tooth_h+IDXtra+Overlap,Tooth_h*1.1,Width/2]);
+	} // diff
+			
+} // GearSegment
+
+rotate([180,0,0])
+GearSegment(nTeeth=60, GearPitch=1200, Width=20, 
+					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=720) Bolt6HeadHole();
+
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
 				Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
@@ -191,7 +244,7 @@ GGC_GearPitch=300;
 GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
 GGC_BearingPinSmall=0.094*25.4;
 
-//*
+/*
 SpokedGear(nTeeth=60, GearPitch=1200, Width=20, 
 				nSpokes=5, 
 				Hub_d=GGC_Hub_d*4, Hub_h=GGC_Hub_h*4, HasSpline=true, SplineLen=GGC_Hub_h*2*4,
