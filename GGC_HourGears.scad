@@ -393,7 +393,7 @@ module MotorGear(QuickView=false){
 				Bore_d=5,QuickView=QuickView, GaurdFlange=true);
 } // MotorGear
 
-MotorGear();
+//MotorGear();
 
 module GearA(QuickView=false){
 	SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch,
@@ -401,6 +401,14 @@ module GearA(QuickView=false){
 				Hub_h=6, HasSpline=true, SplineLen=5+6,
 				Bore_d=GGC_BearingPinSmall,QuickView=QuickView);
 } // GearA
+
+module GearA15x4(){
+	SpurGear(nTeeth=15, Pitch=GGC_GearPitch*4,
+				Width=GGC_GearWidth*4, Hub_d=GGC_Hub_d*4,
+				Bore_d=GGC_BearingPinSmall*4, HasSpline=true);	
+} // GearA15x4
+
+//GearA15x4();
 
 module GearA15(){
 	SpurGear(nTeeth=15, Pitch=GGC_GearPitch,

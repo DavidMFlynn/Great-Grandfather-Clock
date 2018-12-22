@@ -203,7 +203,49 @@ module BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d, GearPitch=GGC_GearPitch, Width=GG
 	} // diff
 } // BoltedSpoke
 
-BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d*4, GearPitch=1200, Width=20, GaurdFlange=false) Bolt6Hole();
+//BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d*4, GearPitch=1200, Width=20, GaurdFlange=false) Bolt6Hole();
+
+module BigHub(Width=GGC_GearWidth, 
+				nSpokes=5, GearPitch=GGC_GearPitch,
+				Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h, HasSpline=true, SplineLen=GGC_Hub_h*2,
+				Bore_d=GGC_Bore_d, GaurdFlange=false){
+	
+	Tooth_h=GearPitch/90;
+					
+	if (HasSpline==true){
+		
+		difference(){
+			SplineHub(Hub_d=Hub_d,Hub_h=Hub_h,SpineLen=SplineLen,Bore_d=Bore_d);
+			
+			for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j]){
+				translate([-Tooth_h*0.75-IDXtra,-Hub_d/2,-Overlap]) cube([Tooth_h*1.5+IDXtra*2,Tooth_h+Tooth_h/20,Width/2.5+Overlap*2]);
+				translate([Tooth_h/2.5,-Hub_d/2+Tooth_h/2,Width/2.5]) rotate([180,0,0]) Bolt6Hole();
+				translate([-Tooth_h/2.5,-Hub_d/2+Tooth_h/2,Width/2.5]) rotate([180,0,0]) Bolt6Hole();
+			}
+			
+		} // diff
+	} else {
+		if (GaurdFlange==true){
+				difference(){
+					translate([0,0,-1]) cylinder(d=GGC_Hub_d,h=Hub_h+1);
+					translate([0,0,-1-Overlap]) cylinder(d=Bore_d,h=Hub_h+1+Overlap*2);
+				} // diff
+			}else{
+		difference(){
+			cylinder(d=GGC_Hub_d,h=Hub_h);
+			
+			translate([0,0,-Overlap]) cylinder(d=Bore_d,h=Hub_h+Overlap*2);
+		} // diff
+		} //if (GaurdFlange==true)
+	} // if
+	
+} // BigHub
+/*
+BigHub(Width=GGC_GearWidth*4, 
+				nSpokes=5, GearPitch=GGC_GearPitch*4,
+				Hub_d=GGC_Hub_d*4, Hub_h=GGC_Hub_h*4, HasSpline=true, SplineLen=GGC_Hub_h*2*4,
+				Bore_d=GGC_Bore_d*4, GaurdFlange=false);
+/**/
 
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 				nSpokes=5, 
@@ -286,7 +328,7 @@ SpokedGear(nTeeth=60, GearPitch=1200, Width=20,
 /**/
 
 module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
-				Width=GGC_GearWidth, 
+				Width=GGC_GearWidth, Hub_d=GGC_Hub_d,
 				Bore_d=GGC_BearingPinSmall, HasSpline=true){
 	
 	difference(){
@@ -308,7 +350,7 @@ module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
 		
 		if (HasSpline==true)
 			translate([0,0,-Overlap])
-			SplineHole(d=GGC_Hub_d-6,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d-6,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 	} // diff
 } // SpurGear
 
