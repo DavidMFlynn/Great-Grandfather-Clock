@@ -69,6 +69,10 @@ GGC_Post2_Y=65;
 GGC_Post3_X=-60;
 GGC_Post3_Y=100;
 
+GGC_GearPitch=300;
+GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
+GGC_BearingPinSmall=0.094*25.4;
+
 
 module PuzzleConnector(Thickness=6){
 	Web_t=6;
@@ -218,7 +222,7 @@ module BigHub(Width=GGC_GearWidth,
 			SplineHub(Hub_d=Hub_d,Hub_h=Hub_h,SpineLen=SplineLen,Bore_d=Bore_d);
 			
 			for (j=[0:nSpokes-1]) rotate([0,0,360/nSpokes*j]){
-				translate([-Tooth_h*0.75-IDXtra,-Hub_d/2,-Overlap]) cube([Tooth_h*1.5+IDXtra*2,Tooth_h+Tooth_h/20,Width/2.5+Overlap*2]);
+				translate([-Tooth_h*0.75-IDXtra,-Hub_d/2,-Overlap]) cube([Tooth_h*1.5+IDXtra*2,Tooth_h+Tooth_h/20+IDXtra,Width/2.5+IDXtra+Overlap*2]);
 				translate([Tooth_h/2.5,-Hub_d/2+Tooth_h/2,Width/2.5]) rotate([180,0,0]) Bolt6Hole();
 				translate([-Tooth_h/2.5,-Hub_d/2+Tooth_h/2,Width/2.5]) rotate([180,0,0]) Bolt6Hole();
 			}
@@ -243,8 +247,8 @@ module BigHub(Width=GGC_GearWidth,
 /*
 BigHub(Width=GGC_GearWidth*4, 
 				nSpokes=5, GearPitch=GGC_GearPitch*4,
-				Hub_d=GGC_Hub_d*4, Hub_h=GGC_Hub_h*4, HasSpline=true, SplineLen=GGC_Hub_h*2*4,
-				Bore_d=GGC_Bore_d*4, GaurdFlange=false);
+				Hub_d=GGC_Hub_d*4, Hub_h=GGC_GearWidth*1.2*4, HasSpline=true, SplineLen=GGC_GearWidth*4+GGC_GearWidth*1.2*4,
+				Bore_d=GGC_BearingPinSmall*4, GaurdFlange=false);
 /**/
 
 module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
@@ -316,9 +320,6 @@ module SpokedGear(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 
 //translate([0,0,-10-Overlap*2]) SpokedGear();
 
-GGC_GearPitch=300;
-GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
-GGC_BearingPinSmall=0.094*25.4;
 
 /*
 SpokedGear(nTeeth=60, GearPitch=1200, Width=20, 
@@ -350,7 +351,7 @@ module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
 		
 		if (HasSpline==true)
 			translate([0,0,-Overlap])
-			SplineHole(d=Hub_d-6,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d*0.7,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 	} // diff
 } // SpurGear
 
