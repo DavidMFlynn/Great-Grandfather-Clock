@@ -22,7 +22,7 @@
 // EscapementDriveGear();
 // *********************************************************
 // for Viewing
-ShowEscapementNPendulum();
+// ShowEscapementNPendulum();
 // *********************************************************
 include<GGC_Basic.scad>
 /*
@@ -78,10 +78,13 @@ module PendulumMountSpline(){
 	SplineHub(Hub_d=GGC_Hub_d,SpineLen=GGC_Hub_h*2+GGC_Escapement_h+2,Bore_d=GGC_Bore_d);
 } // PendulumMountSpline
 
+//PendulumMountSpline();
 
 module EscapementDriveGear(){
 	SpokedGear(nTeeth=30,nSpokes=5);
 } // EscapementDriveGear
+
+//EscapementDriveGear();
 
 module EscapementTopper(){
 	TopperThickness=5;
@@ -93,7 +96,7 @@ module EscapementTopper(){
 	translate([0,90,0]) cylinder(d=Hub_d,h=TopperThickness);
 } // EscapementTopper
 
-translate([0,0,GGC_Hub_h+7+Overlap*2]) EscapementTopper();
+//translate([0,0,GGC_Hub_h+7+Overlap*2]) EscapementTopper();
 
 module PendulumHanger(){
 	Hub_d=GGC_Hub_d;
@@ -127,7 +130,8 @@ module PendulumHanger(){
 	} // diff
 } // PendulumHanger
 
-//translate([0,90,10+Overlap*2]) PendulumHanger();
+//translate([0,90,10+Overlap*2]) 
+//PendulumHanger();
 
 
 
