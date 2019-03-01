@@ -123,7 +123,7 @@ module SplineHoleHub(Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h){
 } // SplineHoleHub
 
 module GearSegment(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
-					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=90){
+					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=90, Label="60T1200"){
 		
 	Tooth_h=GearPitch/90;
 	PD=nTeeth*GearPitch/180;
@@ -158,6 +158,10 @@ module GearSegment(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 		rotate([0,0,180/60+Segment_a]) translate([IDXtra,0,-Overlap]) mirror([1,0,0]) cube([PD,PD,Width+Overlap*2]);
 		rotate([0,0,180/60+Segment_a/2]) translate([-PD,0,-Overlap]) mirror([0,1,0]) cube([PD*2,PD,Width+Overlap*2]);
 		
+		// label
+		rotate([0,0,180/60+Segment_a/2]) translate([0,RimID/2+1.5,Width-1]) 
+			linear_extrude(height=2) text(text=Label,size=8,halign="center");
+		
 		// right notch and bolt
 		rotate([0,0,180/60]) translate([-Tooth_h/2,RimID/2+Tooth_h/2,Width]) children();
 		rotate([0,0,180/60]) translate([-Tooth_h-IDXtra,PD/2-Tooth_h/2,-Overlap]) 
@@ -169,11 +173,12 @@ module GearSegment(nTeeth=60, GearPitch=GGC_GearPitch, Width=GGC_GearWidth,
 			mirror([0,1,0]) cube([Tooth_h+IDXtra+Overlap,Tooth_h*1.1,Width/2]);
 	} // diff
 			
+	
 } // GearSegment
 
 //rotate([180,0,0])
 //GearSegment(nTeeth=60, GearPitch=1200, Width=20, 
-//					Segment_a=72, QuickView=false, GaurdFlange=false, myFn=720) Bolt6HeadHole();
+	//				Segment_a=72, QuickView=false, GaurdFlange=false, myFn=720, Label="60T1200") Bolt6HeadHole();
 
 module BoltedSpoke(nTeeth=60, Hub_d=GGC_Hub_d, GearPitch=GGC_GearPitch, Width=GGC_GearWidth, 
 					GaurdFlange=false, myFn=90){
