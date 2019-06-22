@@ -40,7 +40,7 @@ module WebbedSpoke(ID=25,OD=100,Spoke_w=5,Spoke_h=2,Web_h=4){
 		} // hull
 		
 		rotate([0,0,atan2(Spoke_w,ID/2+Spoke_w/2)]) translate([0,ID/2+Spoke_w/2-Overlap,-Overlap])mirror([1,1,0])
-			cube(Spoke_w,Spoke_w,Spoke_h+Overlap*2);
+			cube([Spoke_w,Spoke_w,Spoke_h+Overlap*2]);
 	}
 
 		// trim ID

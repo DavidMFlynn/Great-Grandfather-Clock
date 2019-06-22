@@ -60,16 +60,21 @@ module ShowEscapementNPendulum(){
 
 
 module EscapeTooth(ToothLen=12,Thickness=3){
+	translate([ToothLen,0,0]) cylinder(d=2,h=Thickness);
+	/*
 	hull(){
 		cylinder(d=2,h=Thickness);
-		translate([ToothLen,0,0]) cylinder(d=2,h=Thickness);
+		translate([ToothLen,-6,0]) cylinder(d=2,h=Thickness);
+		translate([0,4,0]) cylinder(d=2,h=Thickness);
 	} // hull
-	
+	/**/
+	/*
 	difference(){
 		translate([0,1,0]) cube([ToothLen-1,ToothLen-1,Thickness]);
 		translate([ToothLen-1,ToothLen-1+1,-Overlap]) cylinder(r=ToothLen-1+Overlap,h=Thickness+Overlap*2);
 		
 	} // diff
+	/**/
 } // EscapeTooth
 
 //EscapeTooth();
@@ -135,7 +140,7 @@ module PendulumHanger(){
 
 
 
-module EscapementWheel(nTeeth=15, OD=120,Thickness=GGC_Escapement_h){
+module EscapementWheel(nTeeth=30, OD=120,Thickness=GGC_Escapement_h){
 	nSpokes=5;
 	Hub_d=20;
 	
@@ -160,8 +165,59 @@ module EscapementWheel(nTeeth=15, OD=120,Thickness=GGC_Escapement_h){
 	} // diff
 } // EscapementWheel
 
-//EscapementWheel();
+//rotate([0,0,-6.6]) //align to entry pallet
+//rotate([0,0,-10.6]) // Entry release
+//rotate([0,0,-12.4]) //align to exit pallet
+//rotate([0,0,-17]) // exit release
+rotate([0,0,-6.6-12]) //align to entry pallet
+EscapementWheel();
 
+//*
+translate([0,115,0]) rotate([0,0,-4+abs($t-0.5)*16])
+//rotate([0,0,-3]) // Entry release
+//rotate([0,0,3]) // exit release
+
+{ 
+	EscapementRocker();
+	rotate([0,0,7.5]) EntryPallet();
+	rotate([0,0,-7.5]) ExitPallet();
+}
+/**/
+
+
+
+module EntryPallet(OD=120,Thickness=GGC_Escapement_h){
+	difference(){
+		cylinder(d=OD*1.4,h=GGC_Escapement_h);
+		
+		translate([0,0,-Overlap]) cylinder(d=OD*1.4-8,h=GGC_Escapement_h+Overlap*2);
+		
+		rotate([0,0,25]) translate([-OD,0,-Overlap]) cube([OD*2,OD,GGC_Escapement_h+Overlap*2]);
+		rotate([0,0,-130]) translate([-OD,0,-Overlap]) cube([OD*2,OD,GGC_Escapement_h+Overlap*2]);
+		rotate([0,0,45]) translate([-OD*0.7+Overlap,0,-Overlap]) rotate([0,0,-135]) cube([8,8,GGC_Escapement_h+Overlap*2]);
+		//#cylinder(d=5,h=GGC_Escapement_h+Overlap*2);
+	} // diff
+} // EntryPallet
+
+//translate([0,90,0]) // center of anchor
+//EntryPallet();
+
+module ExitPallet(OD=120,Thickness=GGC_Escapement_h){
+	difference(){
+		cylinder(d=OD*1.4,h=GGC_Escapement_h);
+		
+		translate([0,0,-Overlap]) cylinder(d=OD*1.4-8,h=GGC_Escapement_h+Overlap*2);
+		
+		rotate([0,0,-25]) translate([-OD,0,-Overlap]) cube([OD*2,OD,GGC_Escapement_h+Overlap*2]);
+		rotate([0,0,130]) translate([-OD,0,-Overlap]) cube([OD*2,OD,GGC_Escapement_h+Overlap*2]);
+		rotate([0,0,-45]) translate([OD*0.7-4-Overlap,0,-Overlap]) rotate([0,0,135+90]) cube([8,8,GGC_Escapement_h+Overlap*2]);
+		//#cylinder(d=5,h=GGC_Escapement_h+Overlap*2);
+		
+	} // diff
+} // ExitPallet
+
+//translate([0,90,0]) // center of anchor
+//ExitPallet();
 
 module EscapementRocker(OD=120,Thickness=GGC_Escapement_h){
 	Extention=0.75;
@@ -174,11 +230,13 @@ module EscapementRocker(OD=120,Thickness=GGC_Escapement_h){
 			// arms
 			for (j=[0:1]) mirror([j,0,0])
 				rotate([0,0,45]) translate([0,-OD*Extention,0]){
+					/*
 					cylinder(d=5,h=Thickness);
 					hull(){
 						cylinder(d=3,h=Thickness);
 						translate([22,0,0]) cylinder(d=3,h=Thickness);
 					} // hull
+					/**/
 					hull(){
 						translate([22,0,0]) cylinder(d=3,h=Thickness);
 						translate([8,OD*Extention-2,0]) cylinder(d=3,h=Thickness);
