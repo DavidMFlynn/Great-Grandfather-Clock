@@ -3,7 +3,7 @@
 // by David M. Flynn
 // Filename: SplineLib.scad
 // Created: 12/27/2017
-// Rev: 1.1.1 1/9/2018
+// Rev: 1.1.2 12/21/2018
 // Units: millimeters
 // ****************************************************
 // Notes:
@@ -14,7 +14,8 @@
 //  A Gap of 0.4 is loose while a Gap of 0.1 is a press fit.
 // ****************************************************
 // History:
-echo("SplineLib 1.1.1");
+echo("SplineLib 1.1.2");
+// 1.1.2 12/21/2018 Fixed for large spines.
 // 1.1.1 1/9/2018 Added constants Spline_Radius,Spline_Hole_d,Spline_nSplines
 // 1.1.0 12/29/2017 Added Key spline.
 // 1.0.0 12/27/2017 First code
@@ -93,7 +94,7 @@ module SplineShaft(d=20,l=50,nSplines=Spline_nSplines,Spline_w=10,Hole=Spline_Ho
 	/**/		
 		// trim OD
 		difference(){
-			translate([0,0,-Overlap]) cylinder(d=d+5,h=l+Overlap*2);
+			translate([0,0,-Overlap]) cylinder(d=d*1.25,h=l+Overlap*2);
 			translate([0,0,-Overlap*2]) cylinder(d=d,h=l+Overlap*4,$fn=360);
 		} // diff
 		
@@ -181,7 +182,7 @@ module SplineHole(d=20,l=20,nSplines=Spline_nSplines,Spline_w=30,Gap=IDXtra,Key=
 	/**/		
 		// trim OD
 		difference(){
-			translate([0,0,-Overlap]) cylinder(d=d+5,h=l+Overlap*2);
+			translate([0,0,-Overlap]) cylinder(d=d*1.25,h=l+Overlap*2);
 			translate([0,0,-Overlap*2]) cylinder(d=d+Gap*2,h=l+Overlap*4,$fn=360);
 		} // diff
 		
@@ -210,6 +211,8 @@ module SplineHole(d=20,l=20,nSplines=Spline_nSplines,Spline_w=30,Gap=IDXtra,Key=
 	} // diff
 	
 } // SplineHole
+
+//SplineHole(d=80,l=80,nSplines=Spline_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
 
 module SplineHoleTest(){
 difference(){

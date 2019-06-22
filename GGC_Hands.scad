@@ -5,23 +5,31 @@
 // Created: 11/5/2018
 // by: David M. Flynn
 // Licence: GPL3.0
-// Revision: 0.2 11/10/2018
+// Revision: 0.3 12/9/2018
 // Units: mm
 // *********************************************************
 // History:
-// 0.2 11/10/2018 Minute hand
+// 0.3 12/9/2018 Minute hand
+// 0.2 11/10/2018 Hour hand
 // 0.1 11/5/2018 First code
 // *********************************************************
 // for STL output
 //SecondHandHub();
 //SecondHand();
+
+//MinuteHand();
+//MinuteHandHub();
+
+//HourHandTail(); // arrow fletch
+//HourHandHub();
+//HourHand(); // arrow head
 // *********************************************************
 // Routines
 //
 // *********************************************************
 // for Viewing
-rotate([0,0,10]) ShowSecondHand();
-rotate([0,0,-10]) ShowHourHand();
+//rotate([0,0,10]) ShowSecondHand();
+//rotate([0,0,-10]) ShowHourHand();
 // *********************************************************
 include<GGC_Basic.scad>
 
@@ -187,9 +195,44 @@ module SecondHand(){
 
 //translate([100,0,0]) color("Blue") SecondHand();
 
+module MinuteHandHub(){
+	difference(){
+		union(){
+			cylinder(d1=30,d2=25,h=15);
+			translate([100,0,0]) PuzzleConnector(Thickness=5);
+			// hand connection
+			hull(){
+				cylinder(d=20,h=5);
+				translate([100-Overlap,-20/2,0]) cube([Overlap,20,5]);
+			} // hull
+			
+			// counter weight
+			translate([-50,0,0])cylinder(d1=30,d2=25,h=14);
+			translate([-50,-5,0]) cube([50,10,5]);
+		} // union
+		
+		// center hole
+		translate([0,0,-Overlap]) cylinder(d=GGC_MinuteHandShaft_d,h=15+Overlap*2);
+		
+		// counter weight cavity
+		translate([-50,0,1]) cylinder(d=14,h=15+Overlap*2);
+	} // diff
+	
+} // MinuteHandHub
 
+//MinuteHandHub();
 
+module MinuteHand(){
+	difference(){
+		hull(){
+			translate([0,-20/2,0]) cube([Overlap,20,5]);
+			translate([GGC_Face_d/2-150,0,0]) cylinder(d=2,h=5);
+		} // hull
+		translate([0,0,-Overlap])PuzzleConnector(Thickness=5+Overlap*2);
+	} // diff
+} // MinuteHand
 
+//MinuteHand();
 
 
 
