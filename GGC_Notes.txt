@@ -8,3 +8,16 @@ ECHO: Roller_id = 8.36
 ECHO: LinkPin_d = 7.28
 ECHO: LinkPin_id = 4.88
 ECHO: Pin_d = 3.8
+
+Drive:
+Weight = 3kg = 30N
+Drop = 1m
+Block = x6 L, ÷6 F = 5N, 6m
+
+Spool R = 0.075m, C = 0.471m, 12.7 Turns = 762t, Torque = 0.375 Nm
+x 1:1024 Gearbox = 780288t, 0.366mNm
+
+Seconds per week = 604800
+
+
+
