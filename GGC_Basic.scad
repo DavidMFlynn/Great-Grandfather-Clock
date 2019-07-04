@@ -35,7 +35,7 @@ include<WebbedSpokeLib.scad>
 // WebbedSpoke(ID=25,OD=100,Spoke_w=5,Spoke_h=2,Web_h=4);
 include<SplineLib.scad>
 //SplineShaft(d=20,l=30,nSplines=Spline_nSplines,Spline_w=30,Hole=Spline_Hole_d,Key=false);
-// SplineHole(d=20,l=20,nSplines=Spline_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
+// SplineHole(d=20,l=20,nSplines=Spline_nSplines,Spline_w=30,Gap=SplineGap,Key=false);
 include<involute_gears.scad>
 
 $fn=90;
@@ -73,7 +73,7 @@ GGC_Post3_Y=100;
 GGC_GearPitch=300;
 GGC_GearPitchSmall=296.0526; // makes pitch radius of 16:60 the same as 15:60
 GGC_BearingPinSmall=0.094*25.4;
-
+SplineGap=0.08; // was IDXtra
 
 module PuzzleConnector(Thickness=6){
 	Web_t=6;
@@ -118,7 +118,7 @@ module SplineHoleHub(Hub_d=GGC_Hub_d, Hub_h=GGC_Hub_h){
 		cylinder(d=Hub_d,h=Hub_h);
 		
 		translate([0,0,-Overlap])
-			SplineHole(d=Hub_d*0.7, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=IDXtra, Key=false);
+			SplineHole(d=Hub_d*0.7, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=SplineGap, Key=false);
 	} // diff
 	
 } // SplineHoleHub
@@ -357,7 +357,7 @@ module SpurGear(nTeeth=15, Pitch=GGC_GearPitch,
 		
 		if (HasSpline==true)
 			translate([0,0,-Overlap])
-			SplineHole(d=Hub_d*0.7,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=IDXtra,Key=false);
+			SplineHole(d=Hub_d*0.7,l=Width+Overlap*2,nSplines=GGC_nSplines,Spline_w=30,Gap=SplineGap,Key=false);
 	} // diff
 } // SpurGear
 

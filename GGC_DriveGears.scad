@@ -5,10 +5,11 @@
 // Created: 6/30/2019
 // by: David M. Flynn
 // Licence: GPL3.0
-// Revision: 0.9.1 7/2/2019
+// Revision: 0.9.2 7/3/2019
 // Units: mm
 // ************************************************
 //  ***** History *****
+// 0.9.2 7/3/2019 Added RotationLimiter
 // 0.9.1 7/2/2019 Test printing some of the parts.
 // 0.9.0 6/30/2019 First code
 // ************************************************
@@ -17,13 +18,16 @@
 //  and the escapement.
 // ************************************************
 //  ***** for STL output
-// DrivePulley();
-// DrivePulleyCover(myFn=360);
-// DriveGearWithSpring(QuickView=false);
-// DriveHubP1(myFn=360, QuickView=false);
-// DriveHubP2(myFn=360, QuickView=false);
+// DrivePulley(); // FC1
+// DrivePulleyCover(myFn=360); // FC1
+// DriveGearWithSpring(ShowGear=true,ShowSpiral=true); // ??
+// RotationLimiter(); // ??
+// DriveHubP1(myFn=360, QuickView=false); // FC1
+// DriveHubP2(myFn=360, QuickView=false); // FC1
 // GearA();
 // GearA15();
+//
+// BackingPlate(); // FC1
 // ************************************************
 //  ***** for Viewing *****
 // Show1to1000();
@@ -31,6 +35,8 @@
 
 include<GGC_Basic.scad>
 include<BearingLib.scad>
+
+SplineGap=0.08;
 
 module Show1to1000(){
 	
@@ -72,11 +78,14 @@ PulleyBearing_BC=44;
 module ShowHubAndPulleys(){
 	translate([0,0,12]) DriveHubP2();
 	translate([0,0,-Ball_d-2]) DriveHubP1();
-	DriveGearWithSpring(QuickView=true);
+	DriveGearWithSpring();
+	translate([0,0,6+Overlap]) RotationLimiter();
 	
+	//*
 	translate([0,0,12]){
 	DrivePulley();
 	translate([0,0,18]) rotate([0,180,0]) DrivePulleyCover();}
+	/**/
 } // ShowHubAndPulleys
 
 //ShowHubAndPulleys();
@@ -89,53 +98,213 @@ module BackingPlate(){
 	translate([0,0,-Plate_h])
 	difference(){
 		union(){
+			// Drive shaft
 			cylinder(d=OneWayRingOD(Ball_d=Ball_d, BC=BallCircle),h=Plate_h);
 			
-			translate([50+50,0,0]) cylinder(d=15,h=Plate_h);
-			translate([50+50,50+12,0]) cylinder(d=15,h=Plate_h);
+			// Idle gear shaft
+			translate([50+50,0,0]) cylinder(d=15,h=Plate_h+12);
 			
+			// Reduction gear shaft 1
+			translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h+12);
+			
+			// Reduction gear shaft 2
+			translate([50+50+50+12,50+12,0]) cylinder(d=15,h=Plate_h+18);
+			
+			// Mounting hole 1
+			translate([50+50,50+20,0]) cylinder(d=15,h=Plate_h+12);
+			// Mounting hole 2
+			translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h+12);
+			
+			// Drive shaft to Idle gear shaft
 			hull(){
 				cylinder(d=15,h=Plate_h);
 				translate([50+50,0,0]) cylinder(d=15,h=Plate_h);
-			}
+			} // hull
 			
-			hull(){
-				cylinder(d=15,h=Plate_h);
-				translate([50+50,50+12,0]) cylinder(d=15,h=Plate_h);
-			}
-			
+			// Idle gear shaft to Reduction gear shaft 1
 			hull(){
 				translate([50+50,0,0]) cylinder(d=15,h=Plate_h);
-				translate([50+50,50+12,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Reduction gear shaft 1 to Reduction gear shaft 2
+			hull(){
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,50+12,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Drive shaft to Reduction gear shaft 2
+			hull(){
+				cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,50+12,0]) cylinder(d=15,h=Plate_h);
 			}
+			
+			// Mounting hole 1 to Mounting hole 2
+			hull(){
+				translate([50+50,50+20,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Mounting hole 2 to Drive shaft
+			hull(){
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+				cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Mounting hole 2 to Reduction gear shaft 1
+			hull(){
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			//Wall mount top to Drive shaft
+			hull(){
+				translate([-25,35,0]) cylinder(d=15,h=Plate_h);
+				cylinder(d=15,h=Plate_h);
+			} // hull
+			//Wall mount bottom to Drive shaft
+			hull(){
+				translate([-25,-35,0]) cylinder(d=15,h=Plate_h);
+				cylinder(d=15,h=Plate_h);
+			} // hull
 		} // union
 		
-		translate([0,0,-Overlap]) cylinder(d=Shaft_d,h=Plate_h+Overlap*2);
-		translate([50+50,0,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+Overlap*2);
-		translate([50+50,50+12,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+Overlap*2);
+		// Drive shaft
+		//translate([0,0,-Overlap]) cylinder(d=Shaft_d,h=Plate_h+Overlap*2);
+		rotate([180,0,0]) Bolt6ButtonHeadHole();
+		// Idle gear shaft
+		translate([50+50,0,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+12+Overlap*2);
+		// Reduction gear shaft 1
+		translate([50+50+50+12,0,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+12+Overlap*2);
+		// Reduction gear shaft 2
+		translate([50+50+50+12,50+12,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+18+Overlap*2);
+		
+		// Mounting hole 1
+			translate([50+50,50+20,Plate_h+12]) Bolt6Hole(depth=Plate_h+12);
+		// Mounting hole 2
+			translate([50+50,-50-20,Plate_h+12]) Bolt6Hole(depth=Plate_h+12);
+		
+		// Wall mount holes
+		translate([50+50+50+12,40,Plate_h]) Bolt6ClearHole();
+		translate([50+50,50,Plate_h]) Bolt6ClearHole();
+		translate([50+50,-50,Plate_h]) Bolt6ClearHole();
+		translate([50,0,Plate_h]) Bolt6ClearHole();
+		translate([-25,35,Plate_h]) Bolt6ClearHole();
+		translate([-25,-35,Plate_h]) Bolt6ClearHole();
 	}
 	
+	// Drive shaft
 	translate([0,0,-Overlap]) OneWayRing(Ball_d=Ball_d, BC=BallCircle, nStops=7, Thickness=Pulley_w);
 	
 } // BackingPlate
 
 //translate([0,0,-12]) BackingPlate();
 
-module DriveGearWithSpring(QuickView=false){
+module FrontPlate(){
+	Pulley_w=Ball_d+2;
+	Shaft_d=6.35;
+	Plate_h=5;
+	
+	translate([0,0,-Plate_h])
+	difference(){
+		union(){
+			// Drive shaft
+			translate([0,0,-5]) cylinder(d=20,h=Plate_h+5);
+			
+			// Idle gear shaft
+			translate([50+50,0,-30]) cylinder(d=15,h=Plate_h+30);
+			
+			// Reduction gear shaft 1
+			translate([50+50+50+12,0,-2]) cylinder(d=15,h=Plate_h+2);
+			
+			// Reduction gear shaft 2
+			translate([50+50+50+12,50+12,-6]) cylinder(d=15,h=Plate_h+6);
+			
+			// Mounting hole 1
+			translate([50+50,50+20,-10]) cylinder(d=15,h=Plate_h+10);
+			// Mounting hole 2
+			translate([50+50,-50-20,-10]) cylinder(d=15,h=Plate_h+10);
+			
+			// Drive shaft to Idle gear shaft
+			hull(){
+				cylinder(d=15,h=Plate_h);
+				translate([50+50,0,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Idle gear shaft to Reduction gear shaft 1
+			hull(){
+				translate([50+50,0,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Reduction gear shaft 1 to Reduction gear shaft 2
+			hull(){
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,50+12,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Drive shaft to Reduction gear shaft 2
+			hull(){
+				cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,50+12,0]) cylinder(d=15,h=Plate_h);
+			}
+			
+			// Mounting hole 1 to Mounting hole 2
+			hull(){
+				translate([50+50,50+20,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Mounting hole 2 to Drive shaft
+			hull(){
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+				cylinder(d=15,h=Plate_h);
+			} // hull
+			
+			// Mounting hole 2 to Reduction gear shaft 1
+			hull(){
+				translate([50+50,-50-20,0]) cylinder(d=15,h=Plate_h);
+				translate([50+50+50+12,0,0]) cylinder(d=15,h=Plate_h);
+			} // hull
+			
+		} // union
+		
+		// Drive shaft
+		translate([0,0,Plate_h]) Bolt6HeadHole();
+		// Idle gear shaft
+		translate([50+50,0,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+12+Overlap*2);
+		// Reduction gear shaft 1
+		translate([50+50+50+12,0,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+12+Overlap*2);
+		// Reduction gear shaft 2
+		translate([50+50+50+12,50+12,-Overlap]) cylinder(d=GGC_BearingPinSmall,h=Plate_h+18+Overlap*2);
+		
+		// Mounting hole 1
+			translate([50+50,50+20,Plate_h]) Bolt6HeadHole(depth=Plate_h+12);
+		// Mounting hole 2
+			translate([50+50,-50-20,Plate_h]) Bolt6HeadHole(depth=Plate_h+12);
+	}
+	
+	
+} // FrontPlate
+
+//translate([0,0,42]) FrontPlate();
+
+module DriveGearWithSpring(ShowGear=false,ShowSpiral=false){
 	Base_w=Ball_d+2;
 	nTeeth=60;
 	Width=6;
 	SpFn=12;
 	Hub_r=15;
-	Hub_h=12;
+	Hub_h=6;
 	SpStarts=5;
+	
 	
 	PD=nTeeth*GGC_GearPitch/180;
 	RimID=PD-GGC_GearPitch/90-Width*1.2;
 	
 	difference(){
-		
-		if (QuickView==false){
+		union(){
+			if (ShowGear==true){
 				gear (number_of_teeth=nTeeth,
 					circular_pitch=GGC_GearPitch, diametral_pitch=false,
 					pressure_angle=Pressure_a,
@@ -157,9 +326,12 @@ module DriveGearWithSpring(QuickView=false){
 				cylinder(d=30,h=Hub_h);
 			}
 			
-			//*
-			if (QuickView==false)
-			// Spirel
+			for (j=[0:SpStarts-1]) rotate([0,0,360/SpStarts*j]) translate([0,RimID/2+2,Width-Overlap]) cylinder(d=4,h=4);
+		} // union
+			
+			
+			if (ShowSpiral==true){
+			// Spiral
 			for (k=[0:SpStarts-1])
 				for (j=[2:2:720])
 					hull(){
@@ -168,14 +340,65 @@ module DriveGearWithSpring(QuickView=false){
 						rotate([0,0,j-2+360/SpStarts*k])
 							translate([Hub_r+(RimID/2-Hub_r)/720*j,0,-Overlap]) cylinder(d=1,h=Width+Overlap*2,$fn=SpFn);
 					} // hull
-				/**/
+				} else {
+					difference(){
+						translate([0,0,-Overlap]) cylinder(d=RimID,h=Width+Overlap*2);
+						translate([0,0,-Overlap*2]) cylinder(d=31,h=Width+Overlap*4);
+					} // diff
+				} // if
+			
 			
 		translate([0,0,-Overlap])
-			SplineHole(d=25, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=IDXtra, Key=false);
+			SplineHole(d=25, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=SplineGap, Key=false);
 	} // diff
 } // DriveGearWithSpring
 
-//DriveGearWithSpring(QuickView=true);
+//DriveGearWithSpring(ShowGear=true,ShowSpiral=false);
+
+module RotationLimiter(){
+	Base_w=Ball_d+2;
+	nTeeth=60;
+	Width=6;
+	SpFn=12;
+	Hub_r=15;
+	Hub_h=6;
+	SpStarts=5;
+	
+	PD=nTeeth*GGC_GearPitch/180;
+	RimID=PD-GGC_GearPitch/90-Width*1.2;
+	
+	difference(){
+		union(){
+			// Spokes
+			for (j=[0:SpStarts-1]) rotate([0,0,360/SpStarts*j])
+				WebbedSpoke(ID=30-Overlap,OD=RimID-5+Overlap,Spoke_w=6,Spoke_h=2,Web_h=4);
+
+			// hub
+			cylinder(d=30,h=Width);
+			
+			// rim
+			difference(){
+				union(){
+					cylinder(d=RimID,h=Width);
+					cylinder(d=PD+2,h=2);
+				} // union
+				translate([0,0,-Overlap]) cylinder(d=RimID-5,h=Width+Overlap*2);
+			} // diff
+		} // union
+		
+		// the limit slots
+		for (j=[0:SpStarts-1]) rotate([0,0,360/SpStarts*j]) 
+			for (k=[2:30])  hull(){
+				rotate([0,0,k-2]) translate([0,RimID/2+2,-Overlap]) cylinder(d=4+IDXtra*2,h=2+Overlap*2);
+				rotate([0,0,k]) translate([0,RimID/2+2,-Overlap]) cylinder(d=4+IDXtra*2,h=2+Overlap*2);
+			} // hull
+		
+		translate([0,0,-Overlap])
+			SplineHole(d=25, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=SplineGap, Key=false);
+	}
+} // RotationLimiter
+
+//translate([0,0,6+Overlap]) RotationLimiter();
 
 module DriveHubP1(myFn=90, QuickView=false){
 	Base_w=Ball_d+2;
@@ -183,7 +406,7 @@ module DriveHubP1(myFn=90, QuickView=false){
 		
 	difference(){
 		union(){
-			OneWayShaft(Ball_d=Ball_d, BC=BallCircle, nStops=7, Thickness=Base_w-1+Overlap);
+			OneWayShaft(Ball_d=Ball_d, BC=BallCircle, nStops=14, Thickness=Base_w-1+Overlap);
 			
 			SplineShaft(d=25, l=SpineLen, nSplines=GGC_nSplines, Spline_w=30, Hole=12, Key=false);
 			
@@ -214,7 +437,7 @@ module DriveHubP2(myFn=90, QuickView=false){
 		} // union
 		
 		translate([0,0,-Overlap])
-			SplineHole(d=25, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=IDXtra, Key=false);
+			SplineHole(d=25, l=Hub_h+Overlap*2, nSplines=GGC_nSplines, Spline_w=30, Gap=SplineGap, Key=false);
 	} // diff
 } // DriveHubP2
 

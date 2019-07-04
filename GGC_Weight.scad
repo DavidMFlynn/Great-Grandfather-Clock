@@ -1,14 +1,15 @@
 // *****************************************
 // Great Grandfather Clock, Weight and Pulleys
 // Created: 6/30/2019
-// Revision: 0.9 6/30/2019
+// Revision: 0.9.1 7/3/2019
 // units: mm
 // *****************************************
 //  ***** History *****
+// 0.9.1 7/3/2019 Added bolt hole in top of weight.
 // 0.9 6/30/2019 First code
 // *****************************************
 //  ***** for STL output *****
-// BlockPulley(myFn=360);
+// BlockPulley(myFn=360); // Print 6
 // Block(nPulleys=3);
 //
 // rotate([180,0,0]) WeightTop(Fast=false);
@@ -30,6 +31,11 @@ kThd_d=80;
 kThd_p=5;
 kThd_h=30;
 
+PulleyBearing_ID=6.35;
+PulleyBearing_OD=12.7;
+PulleyBearing_h=4.5;
+
+
 module ShowBlock(nPulleys=3){
 	Block(nPulleys=nPulleys);
 	
@@ -42,14 +48,14 @@ module Block(nPulleys=3){
 	
 	difference(){
 		union(){
-			translate([0,(5.2*nPulleys)/2,0])
+			translate([0,((PulleyBearing_h+1)*nPulleys)/2,0])
 			hull(){
 				rotate([-90,0,0]) cylinder(d=20,h=5);
 				
 				translate([-10,0,-Block_h]) cube([20,5,5]);
 			} // hull
 			
-			translate([0,-(5.2*nPulleys)/2-5,0])
+			translate([0,-((PulleyBearing_h+1)*nPulleys)/2-5,0])
 			hull(){
 				rotate([-90,0,0]) cylinder(d=20,h=5);
 				
@@ -60,8 +66,10 @@ module Block(nPulleys=3){
 			
 		} // union
 		
-		translate([0,-(5.2*nPulleys)/2-5-Overlap,0]) rotate([-90,0,0]) 
-			cylinder(d=6.35,h=nPulleys*5.2+10+Overlap*2);
+		translate([0,-((PulleyBearing_h+1)*nPulleys)/2-5-Overlap,0]){
+			rotate([90,0,0]) Bolt6ClearHole();
+			 rotate([-90,0,0]) translate([0,0,6]) cylinder(d=6.35,h=nPulleys*5.2+10+Overlap*2);
+		}
 		
 		translate([0,0,-Block_h-Overlap]) cylinder(d=6.4,h=5+Overlap*2);
 	} // diff
@@ -73,11 +81,11 @@ module BlockPulley(myFn=90){
 	nHoles=7;
 	
 	difference(){
-		OnePieceInnerRace(BallCircle_d=50,	Race_ID=12.7,
-			Ball_d=3, Race_w=5, PreLoadAdj=0.00, VOffset=0.00, BI=false, myFn=myFn);
+		OnePieceInnerRace(BallCircle_d=50,	Race_ID=PulleyBearing_OD,
+			Ball_d=3, Race_w=PulleyBearing_h, PreLoadAdj=0.00, VOffset=0.00, BI=false, myFn=myFn);
 		
 		for (j=[0:nHoles-1]) rotate([0,0,350/nHoles*j])
-			translate([15,0,-Overlap]) cylinder(d=10,h=5+Overlap*2);
+			translate([15,0,-Overlap]) cylinder(d=10,h=PulleyBearing_h+Overlap*2);
 	} // diff
 } // BlockPulley
 
@@ -136,6 +144,13 @@ module WeightTop(Fast=true){
 					head_height	  = 0);
 			}
 		
+		// Trim thread
+		difference(){
+			translate([0,0,-Overlap]) cylinder(d=kThd_d+2,h=kThd_h+Overlap*2);
+			translate([0,0,-Overlap*2]) cylinder(d=kThd_d-1.5,h=kThd_h+Overlap*4,$fn=360);
+		} // diff
+		
+		// center hole
 		translate([0,0,-Overlap]) cylinder(d=kThd_d-kThd_p*2,h=kThd_h+Overlap*2);
 	} // diff
 
@@ -143,10 +158,13 @@ module WeightTop(Fast=true){
 		translate([0,0,kThd_h-1]) cylinder(d=kThd_d+10,h=100);
 		
 		translate([0,0,kThd_h-1-Overlap]) cylinder(d=kThd_d-kThd_p*2,h=94);
+		
+		translate([0,0,kThd_h-1+100]) Bolt250Hole();
 	} // diff
 
 } // WeightTop
 
+//WeightTop(Fast=false);
 //WeightTop(Fast=true);
 
 
