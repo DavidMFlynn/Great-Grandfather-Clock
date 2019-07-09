@@ -1,10 +1,11 @@
 // *****************************************
 // Great Grandfather Clock, Weight and Pulleys
 // Created: 6/30/2019
-// Revision: 0.9.1 7/3/2019
+// Revision: 0.9.2 7/5/2019
 // units: mm
 // *****************************************
 //  ***** History *****
+// 0.9.2 7/5/2019 Added decoration and kThd_Xtra
 // 0.9.1 7/3/2019 Added bolt hole in top of weight.
 // 0.9 6/30/2019 First code
 // *****************************************
@@ -30,11 +31,13 @@ IDXtra=0.2;
 kThd_d=80;
 kThd_p=5;
 kThd_h=30;
+kThd_Xtra=IDXtra*2;
 
 PulleyBearing_ID=6.35;
 PulleyBearing_OD=12.7;
 PulleyBearing_h=4.5;
 
+nSlots=11; // decoration
 
 module ShowBlock(nPulleys=3){
 	Block(nPulleys=nPulleys);
@@ -91,6 +94,8 @@ module BlockPulley(myFn=90){
 
 //BlockPulley();
 
+Weight_OD=kThd_d+8;
+
 module WeightBottom(Fast=true){
 	
 	difference(){
@@ -98,7 +103,7 @@ module WeightBottom(Fast=true){
 			cylinder(d=kThd_d+10,h=kThd_h);
 		} else {
 			Nut_Job(type="nut",
-				nut_thread_outer_diameter = kThd_d,
+				nut_thread_outer_diameter = kThd_d+kThd_Xtra,
 				nut_thread_step = kThd_p,
 				nut_diameter  = kThd_d+10,
 				nut_height	  = kThd_h,
@@ -109,26 +114,35 @@ module WeightBottom(Fast=true){
 		
 		difference(){
 			translate([0,0,-Overlap]) cylinder(d=kThd_d+30,h=kThd_h+Overlap*2);
-			translate([0,0,-Overlap*2]) cylinder(d=kThd_d+8,h=kThd_h+Overlap*4);
+			translate([0,0,-Overlap*2]) cylinder(d=Weight_OD,h=kThd_h+Overlap*4);
 		} // diff
 	} // diff
 	
 	difference(){
 		hull(){
 			translate([0,0,-100]) sphere(d=30);
-			translate([0,0,-70]) cylinder(d=kThd_d+8,h=70+Overlap);
+			translate([0,0,-70]) cylinder(d=Weight_OD,h=70+Overlap);
 		} // hull
 		
 		hull(){
 			translate([0,0,-100]) sphere(d=20);
 			translate([0,0,-70]) cylinder(d=kThd_d,h=70+Overlap*2);
 		} // hull
+		
+		// decoration
+		for (j=[0:nSlots-1]) rotate([0,0,360/nSlots*j])hull(){
+			translate([Weight_OD/2+4,0,-50]) sphere(d=14);
+			translate([Weight_OD/2+4,0,-50+40]) sphere(d=14);
+		} // hull
+		
 	} // diff
 	
 } // WeightBottom
 
 //WeightBottom(Fast=true);
-	
+
+
+
 module WeightTop(Fast=true){
 	
 	difference(){
@@ -137,7 +151,7 @@ module WeightTop(Fast=true){
 				cylinder(d=kThd_d,h=kThd_h);
 			} else {
 				Nut_Job(type="bolt",
-					thread_outer_diameter = kThd_d,
+					thread_outer_diameter = kThd_d-kThd_Xtra,
 					thread_step = kThd_p,
 					thread_length= kThd_h,
 					head_diameter  = 0,
@@ -155,17 +169,23 @@ module WeightTop(Fast=true){
 	} // diff
 
 	difference(){
-		translate([0,0,kThd_h-1]) cylinder(d=kThd_d+10,h=100);
+		translate([0,0,kThd_h-1]) cylinder(d=Weight_OD,h=100);
 		
 		translate([0,0,kThd_h-1-Overlap]) cylinder(d=kThd_d-kThd_p*2,h=94);
 		
 		translate([0,0,kThd_h-1+100]) Bolt250Hole();
+		
+		// decoration
+		for (j=[0:nSlots-1]) rotate([0,0,360/nSlots*j])hull(){
+			translate([Weight_OD/2+4,0,50]) sphere(d=14);
+			translate([Weight_OD/2+4,0,50+60]) sphere(d=14);
+		} // hull
 	} // diff
 
 } // WeightTop
 
 //WeightTop(Fast=false);
-//WeightTop(Fast=true);
+// WeightTop(Fast=true);
 
 
 
